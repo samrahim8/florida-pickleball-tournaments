@@ -66,30 +66,33 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-4">
+    <div className="min-h-screen bg-[#FAF7F2] flex flex-col justify-center py-12 px-4">
       <div className="max-w-md w-full mx-auto">
         {/* Logo */}
-        <Link href="/" className="flex items-center justify-center gap-2.5 mb-8">
-          <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
-            <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+        <Link href="/" className="flex items-center justify-center gap-3 mb-10">
+          <div className="w-10 h-10 bg-[#2D4A3E] rounded-full flex items-center justify-center">
+            <svg className="w-5 h-5 text-[#FAF7F2]" fill="currentColor" viewBox="0 0 24 24">
               <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="2"/>
               <circle cx="12" cy="12" r="3" />
             </svg>
           </div>
-          <span className="font-semibold text-gray-900 text-xl">FL Pickleball</span>
+          <div className="flex flex-col">
+            <span className="font-serif text-lg text-[#2C2C2C] tracking-tight">Florida Pickleball</span>
+            <span className="text-[10px] text-[#9A948D] uppercase tracking-widest -mt-0.5">Tournaments</span>
+          </div>
         </Link>
 
         {/* Card */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-          <h1 className="text-2xl font-bold text-gray-900 text-center mb-2">
-            Create an account
+        <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-8">
+          <h1 className="text-2xl text-[#2C2C2C] text-center mb-2">
+            Create an Account
           </h1>
-          <p className="text-gray-500 text-center mb-8">
+          <p className="text-[#6B6560] text-center mb-8">
             Sign up to submit and manage tournaments
           </p>
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 text-sm">
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6 text-sm">
               {error}
             </div>
           )}
@@ -98,7 +101,7 @@ export default function SignUpPage() {
           <button
             onClick={handleGoogleSignUp}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 bg-white border border-gray-300 rounded-lg px-4 py-3 font-medium text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-3 bg-[#FFFDF9] border border-[#D4CCC0] rounded px-4 py-3 font-medium text-[#2C2C2C] hover:bg-[#F5F0E8] transition-colors disabled:opacity-50"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -109,16 +112,16 @@ export default function SignUpPage() {
             Continue with Google
           </button>
 
-          <div className="flex items-center gap-4 my-6">
-            <div className="flex-grow h-px bg-gray-200" />
-            <span className="text-sm text-gray-400">or</span>
-            <div className="flex-grow h-px bg-gray-200" />
+          <div className="flex items-center gap-4 my-8">
+            <div className="flex-grow h-px bg-[#E8E2D9]" />
+            <span className="text-sm text-[#9A948D]">or</span>
+            <div className="flex-grow h-px bg-[#E8E2D9]" />
           </div>
 
           {/* Email Sign Up */}
-          <form onSubmit={handleEmailSignUp} className="space-y-4">
+          <form onSubmit={handleEmailSignUp} className="space-y-5">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label htmlFor="email" className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                 Email
               </label>
               <input
@@ -133,7 +136,7 @@ export default function SignUpPage() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label htmlFor="password" className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                 Password
               </label>
               <input
@@ -148,7 +151,7 @@ export default function SignUpPage() {
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-1.5">
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                 Confirm Password
               </label>
               <input
@@ -167,14 +170,14 @@ export default function SignUpPage() {
               disabled={loading}
               className="btn-primary w-full disabled:opacity-50"
             >
-              {loading ? 'Creating account...' : 'Create account'}
+              {loading ? 'Creating account...' : 'Create Account'}
             </button>
           </form>
         </div>
 
-        <p className="text-center text-gray-500 mt-6">
+        <p className="text-center text-[#6B6560] mt-8">
           Already have an account?{' '}
-          <Link href="/signin" className="text-orange-600 hover:text-orange-700 font-medium">
+          <Link href="/signin" className="text-[#C4704A] hover:text-[#A85D3B] font-medium">
             Sign in
           </Link>
         </p>

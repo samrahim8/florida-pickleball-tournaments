@@ -14,18 +14,18 @@ export default function TournamentsPage() {
       <Header />
 
       {/* Page Header */}
-      <section className="bg-court-green text-cream py-12">
+      <section className="bg-[#2D4A3E] py-12">
         <div className="max-w-6xl mx-auto px-4">
-          <h1 className="font-serif text-3xl md:text-4xl text-cream">
+          <h1 className="font-serif text-3xl md:text-4xl text-[#FAF7F2]">
             Browse Tournaments
           </h1>
-          <p className="text-cream/70 mt-2">
+          <p className="text-[#FAF7F2]/70 mt-2">
             Find your next competition across the Sunshine State
           </p>
         </div>
       </section>
 
-      <main className="flex-grow bg-cream-dark">
+      <main className="flex-grow bg-[#F5F0E8]">
         <Suspense fallback={<TournamentsLoading />}>
           <TournamentsList />
         </Suspense>
@@ -40,10 +40,10 @@ function TournamentsLoading() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-12">
       <div className="animate-pulse space-y-6">
-        <div className="h-10 bg-cream rounded w-full max-w-md" />
+        <div className="h-10 bg-[#FAF7F2] rounded w-full max-w-md" />
         <div className="grid md:grid-cols-2 gap-6">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="h-40 bg-cream rounded" />
+            <div key={i} className="h-40 bg-[#FAF7F2] rounded" />
           ))}
         </div>
       </div>

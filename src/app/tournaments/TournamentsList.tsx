@@ -59,10 +59,10 @@ export default function TournamentsList() {
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setSelectedLevel(null)}
-            className={`px-3 py-1.5 text-sm font-medium transition-colors ${
+            className={`px-3 py-1.5 text-sm font-medium rounded transition-colors ${
               selectedLevel === null
-                ? 'bg-terracotta text-cream'
-                : 'bg-cream text-charcoal hover:bg-terracotta/10'
+                ? 'bg-[#C4704A] text-white'
+                : 'bg-[#FFFDF9] text-[#2C2C2C] hover:bg-[#C4704A]/10'
             }`}
           >
             All Levels
@@ -71,10 +71,10 @@ export default function TournamentsList() {
             <button
               key={level}
               onClick={() => setSelectedLevel(level)}
-              className={`px-3 py-1.5 text-sm font-medium transition-colors ${
+              className={`px-3 py-1.5 text-sm font-medium rounded transition-colors ${
                 selectedLevel === level
-                  ? 'bg-terracotta text-cream'
-                  : 'bg-cream text-charcoal hover:bg-terracotta/10'
+                  ? 'bg-[#C4704A] text-white'
+                  : 'bg-[#FFFDF9] text-[#2C2C2C] hover:bg-[#C4704A]/10'
               }`}
             >
               {level}
@@ -84,7 +84,7 @@ export default function TournamentsList() {
       </div>
 
       {/* Results count */}
-      <p className="text-charcoal-light mb-6">
+      <p className="text-[#6B6560] mb-6">
         {loading ? 'Loading...' : `${tournaments.length} tournament${tournaments.length !== 1 ? 's' : ''} found`}
       </p>
 
@@ -92,13 +92,13 @@ export default function TournamentsList() {
       {loading ? (
         <div className="grid md:grid-cols-2 gap-6">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="card-texture p-5 animate-pulse">
+            <div key={i} className="bg-[#FFFDF9] border border-[#E8E2D9] rounded-lg p-5 animate-pulse">
               <div className="flex gap-4">
-                <div className="w-16 h-20 bg-cream-dark rounded" />
+                <div className="w-16 h-20 bg-[#F5F0E8] rounded" />
                 <div className="flex-grow space-y-3">
-                  <div className="h-4 bg-cream-dark rounded w-1/3" />
-                  <div className="h-5 bg-cream-dark rounded w-3/4" />
-                  <div className="h-4 bg-cream-dark rounded w-1/2" />
+                  <div className="h-4 bg-[#F5F0E8] rounded w-1/3" />
+                  <div className="h-5 bg-[#F5F0E8] rounded w-3/4" />
+                  <div className="h-4 bg-[#F5F0E8] rounded w-1/2" />
                 </div>
               </div>
             </div>
@@ -111,9 +111,9 @@ export default function TournamentsList() {
           ))}
         </div>
       ) : (
-        <div className="card-texture p-12 text-center">
-          <p className="text-charcoal-light text-lg mb-2">No tournaments found</p>
-          <p className="text-charcoal-light/70 text-sm">
+        <div className="bg-[#FFFDF9] border border-[#E8E2D9] rounded-lg p-12 text-center">
+          <p className="text-[#6B6560] text-lg mb-2">No tournaments found</p>
+          <p className="text-[#9A948D] text-sm">
             Try adjusting your filters or check back later for new listings.
           </p>
         </div>

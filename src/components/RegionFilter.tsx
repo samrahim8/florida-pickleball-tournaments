@@ -13,10 +13,10 @@ export default function RegionFilter({ selected, onChange }: RegionFilterProps) 
     <div className="flex flex-wrap gap-2">
       <button
         onClick={() => onChange(null)}
-        className={`px-4 py-2 text-sm font-medium rounded-full transition-all ${
+        className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
           selected === null
-            ? 'bg-orange-500 text-white'
-            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            ? 'bg-[#2D4A3E] text-white'
+            : 'bg-[#FFFDF9] text-[#6B6560] hover:bg-[#F5F0E8]'
         }`}
       >
         All Regions
@@ -25,10 +25,10 @@ export default function RegionFilter({ selected, onChange }: RegionFilterProps) 
         <button
           key={region}
           onClick={() => onChange(region)}
-          className={`px-4 py-2 text-sm font-medium rounded-full transition-all ${
+          className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
             selected === region
-              ? 'bg-orange-500 text-white'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              ? 'bg-[#2D4A3E] text-white'
+              : 'bg-[#FFFDF9] text-[#6B6560] hover:bg-[#F5F0E8]'
           }`}
         >
           {region}

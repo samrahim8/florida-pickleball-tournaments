@@ -138,32 +138,32 @@ export default function SubmitTournamentPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full" />
+      <div className="min-h-screen bg-[#FAF7F2] flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-4 border-[#C4704A] border-t-transparent rounded-full" />
       </div>
     )
   }
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-[#FAF7F2]">
         <Header />
         <div className="max-w-xl mx-auto py-20 px-4 text-center">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-16 h-16 bg-[#2D4A3E]/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-8 h-8 text-[#2D4A3E]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Tournament Submitted!</h1>
-          <p className="text-gray-500 mb-8">
+          <h1 className="text-2xl text-[#2C2C2C] mb-2">Tournament Submitted!</h1>
+          <p className="text-[#6B6560] mb-8">
             Your tournament has been submitted for review. We&apos;ll notify you once it&apos;s approved.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/submit" onClick={() => { setSuccess(false); resetForm() }} className="btn-primary">
               Submit Another
             </Link>
-            <Link href="/" className="btn-secondary">
-              Back to Home
+            <Link href="/dashboard" className="btn-secondary">
+              View Dashboard
             </Link>
           </div>
         </div>
@@ -191,30 +191,30 @@ export default function SubmitTournamentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#FAF7F2]">
       <Header />
 
       <div className="max-w-2xl mx-auto py-12 px-4">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Submit a Tournament</h1>
-          <p className="text-gray-500 mt-2">
+        <div className="mb-10">
+          <h1 className="text-3xl text-[#2C2C2C]">Submit a Tournament</h1>
+          <p className="text-[#6B6560] mt-2">
             Fill out the details below to list your tournament.
           </p>
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 text-sm">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6 text-sm">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Basic Info */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h2>
+          <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6">
+            <h2 className="font-serif text-lg text-[#2C2C2C] mb-4">Basic Information</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                   Tournament Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -228,27 +228,27 @@ export default function SubmitTournamentPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                   Description
                 </label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={4}
-                  className="w-full bg-white border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 resize-none"
+                  className="w-full bg-[#FFFDF9] border border-[#E8E2D9] rounded px-4 py-3 focus:outline-none focus:border-[#C4704A] focus:ring-1 focus:ring-[#C4704A]/20 resize-none text-[#2C2C2C] placeholder-[#9A948D]"
                   placeholder="Tell players what makes this tournament special..."
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#2C2C2C] mb-2">
                   Tournament Flyer
                 </label>
                 <ImageUpload
                   value={null}
                   onChange={(file) => setImageFile(file)}
                 />
-                <p className="text-xs text-gray-400 mt-2">
+                <p className="text-xs text-[#9A948D] mt-2">
                   Upload a square image for your tournament flyer (shown on detail page)
                 </p>
               </div>
@@ -256,11 +256,11 @@ export default function SubmitTournamentPage() {
           </div>
 
           {/* Date & Location */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Date & Location</h2>
+          <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6">
+            <h2 className="font-serif text-lg text-[#2C2C2C] mb-4">Date & Location</h2>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                   Start Date <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -273,7 +273,7 @@ export default function SubmitTournamentPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                   End Date
                 </label>
                 <input
@@ -285,7 +285,7 @@ export default function SubmitTournamentPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                   City <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -299,7 +299,7 @@ export default function SubmitTournamentPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                   Region <span className="text-red-500">*</span>
                 </label>
                 <select
@@ -316,12 +316,12 @@ export default function SubmitTournamentPage() {
           </div>
 
           {/* Tournament Details */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Tournament Details</h2>
+          <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6">
+            <h2 className="font-serif text-lg text-[#2C2C2C] mb-4">Tournament Details</h2>
             <div className="space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                     Skill Level <span className="text-red-500">*</span>
                   </label>
                   <select
@@ -336,7 +336,7 @@ export default function SubmitTournamentPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                     Format
                   </label>
                   <select
@@ -353,7 +353,7 @@ export default function SubmitTournamentPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#2C2C2C] mb-2">
                   Categories
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -364,8 +364,8 @@ export default function SubmitTournamentPage() {
                       onClick={() => handleCategoryToggle(cat)}
                       className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${
                         categories.includes(cat)
-                          ? 'bg-orange-500 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          ? 'bg-[#C4704A] text-white'
+                          : 'bg-[#F5F0E8] text-[#6B6560] hover:bg-[#E8E2D9]'
                       }`}
                     >
                       {cat}
@@ -377,11 +377,11 @@ export default function SubmitTournamentPage() {
           </div>
 
           {/* Registration */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Registration</h2>
+          <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6">
+            <h2 className="font-serif text-lg text-[#2C2C2C] mb-4">Registration</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                   Registration Deadline
                 </label>
                 <input
@@ -393,7 +393,7 @@ export default function SubmitTournamentPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                   Registration URL
                 </label>
                 <input
@@ -407,7 +407,7 @@ export default function SubmitTournamentPage() {
 
               <div className="grid sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                     Entry Fee (Min)
                   </label>
                   <input
@@ -421,7 +421,7 @@ export default function SubmitTournamentPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                     Entry Fee (Max)
                   </label>
                   <input
@@ -435,7 +435,7 @@ export default function SubmitTournamentPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                     Max Participants
                   </label>
                   <input
@@ -450,7 +450,7 @@ export default function SubmitTournamentPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                   Prize Pool
                 </label>
                 <input

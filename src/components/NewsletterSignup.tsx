@@ -1,71 +1,61 @@
 'use client'
 
 import { useState } from 'react'
-import { FLORIDA_REGIONS } from '@/lib/constants'
 
 export default function NewsletterSignup() {
   const [email, setEmail] = useState('')
-  const [region, setRegion] = useState('')
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setStatus('loading')
+    setLoading(true)
+    setError(null)
 
-    // TODO: Implement actual subscription logic
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    setStatus('success')
+    // For now, just simulate success
+    // In production, you'd call an API to save the email
+    await new Promise(resolve => setTimeout(resolve, 500))
+
+    setSuccess(true)
+    setLoading(false)
     setEmail('')
-    setRegion('')
   }
 
-  if (status === 'success') {
+  if (success) {
     return (
-      <div className="bg-white/10 border border-white/20 rounded-xl p-6 text-center">
-        <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3">
-          <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="text-center">
+        <div className="w-12 h-12 bg-[#FAF7F2]/20 rounded-full flex items-center justify-center mx-auto mb-4">
+          <svg className="w-6 h-6 text-[#FAF7F2]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <p className="text-white font-medium">You&apos;re subscribed!</p>
-        <p className="text-gray-400 text-sm mt-1">
-          We&apos;ll send you tournament updates.
-        </p>
+        <p className="text-[#FAF7F2] font-medium">You&apos;re on the list!</p>
+        <p className="text-[#7A8B7A] text-sm mt-1">We&apos;ll let you know when new tournaments are added.</p>
       </div>
     )
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="flex flex-col sm:flex-row gap-3">
-        <input
-          type="email"
-          placeholder="your@email.com"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          className="flex-grow bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
-        />
-        <select
-          value={region}
-          onChange={(e) => setRegion(e.target.value)}
-          className="bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 sm:w-48"
-        >
-          <option value="" className="text-gray-900">All regions</option>
-          {FLORIDA_REGIONS.map((r) => (
-            <option key={r} value={r} className="text-gray-900">
-              {r}
-            </option>
-          ))}
-        </select>
-      </div>
+    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+        placeholder="Enter your email"
+        className="flex-grow px-4 py-3 rounded bg-[#FAF7F2]/10 border border-[#FAF7F2]/20 text-[#FAF7F2] placeholder-[#7A8B7A] focus:outline-none focus:border-[#FAF7F2]/40 focus:ring-1 focus:ring-[#FAF7F2]/20"
+      />
       <button
         type="submit"
-        disabled={status === 'loading'}
-        className="btn-primary w-full sm:w-auto disabled:opacity-50"
+        disabled={loading}
+        className="px-6 py-3 bg-[#C4704A] text-[#FAF7F2] font-medium rounded hover:bg-[#A85D3B] transition-colors disabled:opacity-50"
       >
-        {status === 'loading' ? 'Subscribing...' : 'Subscribe'}
+        {loading ? 'Subscribing...' : 'Subscribe'}
       </button>
+      {error && (
+        <p className="text-red-400 text-sm mt-2">{error}</p>
+      )}
     </form>
   )
 }

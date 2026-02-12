@@ -78,18 +78,18 @@ export default async function TournamentDetailPage({ params }: PageProps) {
     : 'TBD'
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-[#FAF7F2]">
       <Header />
 
       {/* Breadcrumb */}
-      <div className="bg-cream-dark py-3">
+      <div className="bg-[#F5F0E8] py-3 border-b border-[#E8E2D9]">
         <div className="max-w-4xl mx-auto px-4">
           <nav className="text-sm">
-            <Link href="/tournaments" className="text-charcoal-light hover:text-court-green">
+            <Link href="/tournaments" className="text-[#6B6560] hover:text-[#C4704A]">
               Tournaments
             </Link>
-            <span className="mx-2 text-charcoal-light">/</span>
-            <span className="text-charcoal">{tournament.name}</span>
+            <span className="mx-2 text-[#9A948D]">/</span>
+            <span className="text-[#2C2C2C]">{tournament.name}</span>
           </nav>
         </div>
       </div>
@@ -99,29 +99,27 @@ export default async function TournamentDetailPage({ params }: PageProps) {
           {/* Header */}
           <header className="mb-8">
             <div className="flex flex-wrap items-center gap-2 mb-4">
-              <span className="region-badge">{tournament.region}</span>
-              <span className="skill-badge">{tournament.level}</span>
+              <span className="badge badge-green">{tournament.region}</span>
+              <span className="badge badge-gray">{tournament.level}</span>
               {tournament.featured && (
-                <span className="px-3 py-1 text-xs font-medium bg-brass/20 text-brass border border-brass/30">
-                  Featured
-                </span>
+                <span className="badge badge-orange">Featured</span>
               )}
             </div>
 
-            <h1 className="font-serif text-3xl md:text-4xl text-charcoal leading-tight mb-4">
+            <h1 className="font-serif text-3xl md:text-4xl text-[#2C2C2C] leading-tight mb-4">
               {tournament.name}
             </h1>
 
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-charcoal-light">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[#6B6560]">
               <span className="flex items-center gap-2">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-[#9A948D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
                 {tournament.city}, FL
               </span>
               <span className="flex items-center gap-2">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-[#9A948D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 {dateDisplay}
@@ -132,12 +130,25 @@ export default async function TournamentDetailPage({ params }: PageProps) {
           <div className="grid md:grid-cols-3 gap-8">
             {/* Main Content */}
             <div className="md:col-span-2 space-y-8">
+              {/* Tournament Flyer Image */}
+              {tournament.image_url && (
+                <section>
+                  <div className="rounded-lg overflow-hidden border border-[#E8E2D9]">
+                    <img
+                      src={tournament.image_url}
+                      alt={`${tournament.name} flyer`}
+                      className="w-full h-auto"
+                    />
+                  </div>
+                </section>
+              )}
+
               {/* Description */}
               {tournament.description && (
                 <section>
-                  <h2 className="font-serif text-xl text-charcoal mb-4">About</h2>
-                  <div className="prose prose-charcoal">
-                    <p className="text-charcoal-light leading-relaxed whitespace-pre-wrap">
+                  <h2 className="font-serif text-xl text-[#2C2C2C] mb-4">About</h2>
+                  <div className="prose">
+                    <p className="text-[#6B6560] leading-relaxed whitespace-pre-wrap">
                       {tournament.description}
                     </p>
                   </div>
@@ -147,10 +158,10 @@ export default async function TournamentDetailPage({ params }: PageProps) {
               {/* Categories */}
               {tournament.categories && tournament.categories.length > 0 && (
                 <section>
-                  <h2 className="font-serif text-xl text-charcoal mb-4">Categories</h2>
+                  <h2 className="font-serif text-xl text-[#2C2C2C] mb-4">Categories</h2>
                   <div className="flex flex-wrap gap-2">
                     {tournament.categories.map((category) => (
-                      <span key={category} className="skill-badge">
+                      <span key={category} className="px-3 py-1 text-sm rounded bg-[#F5F0E8] text-[#6B6560]">
                         {category}
                       </span>
                     ))}
@@ -161,15 +172,15 @@ export default async function TournamentDetailPage({ params }: PageProps) {
               {/* Venue */}
               {tournament.venue && (
                 <section>
-                  <h2 className="font-serif text-xl text-charcoal mb-4">Venue</h2>
-                  <div className="card-texture p-5">
-                    <h3 className="font-medium text-charcoal mb-2">{tournament.venue.name}</h3>
+                  <h2 className="font-serif text-xl text-[#2C2C2C] mb-4">Venue</h2>
+                  <div className="bg-[#FFFDF9] border border-[#E8E2D9] rounded-lg p-5">
+                    <h3 className="font-medium text-[#2C2C2C] mb-2">{tournament.venue.name}</h3>
                     {tournament.venue.address && (
-                      <p className="text-charcoal-light text-sm mb-3">
+                      <p className="text-[#6B6560] text-sm mb-3">
                         {tournament.venue.address}, {tournament.venue.city}, FL
                       </p>
                     )}
-                    <div className="flex flex-wrap gap-4 text-sm text-charcoal-light">
+                    <div className="flex flex-wrap gap-4 text-sm text-[#6B6560]">
                       {tournament.venue.court_count && (
                         <span>{tournament.venue.court_count} courts</span>
                       )}
@@ -186,27 +197,27 @@ export default async function TournamentDetailPage({ params }: PageProps) {
               {/* Organizer */}
               {tournament.organizer && (
                 <section>
-                  <h2 className="font-serif text-xl text-charcoal mb-4">Organizer</h2>
-                  <div className="card-texture p-5">
+                  <h2 className="font-serif text-xl text-[#2C2C2C] mb-4">Organizer</h2>
+                  <div className="bg-[#FFFDF9] border border-[#E8E2D9] rounded-lg p-5">
                     <div className="flex items-center gap-3">
                       {tournament.organizer.logo_url ? (
                         <img
                           src={tournament.organizer.logo_url}
                           alt={tournament.organizer.name}
-                          className="w-12 h-12 object-contain"
+                          className="w-12 h-12 object-contain rounded"
                         />
                       ) : (
-                        <div className="w-12 h-12 bg-court-green/10 flex items-center justify-center">
-                          <span className="text-court-green font-serif text-xl">
+                        <div className="w-12 h-12 bg-[#2D4A3E]/10 rounded flex items-center justify-center">
+                          <span className="text-[#2D4A3E] font-serif text-xl">
                             {tournament.organizer.name.charAt(0)}
                           </span>
                         </div>
                       )}
                       <div>
-                        <h3 className="font-medium text-charcoal">
+                        <h3 className="font-medium text-[#2C2C2C]">
                           {tournament.organizer.name}
                           {tournament.organizer.verified && (
-                            <span className="ml-2 text-court-green text-sm">Verified</span>
+                            <span className="ml-2 text-[#2D4A3E] text-sm">Verified</span>
                           )}
                         </h3>
                         {tournament.organizer.website && (
@@ -214,7 +225,7 @@ export default async function TournamentDetailPage({ params }: PageProps) {
                             href={tournament.organizer.website}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-sm text-court-green hover:text-court-green-light"
+                            className="text-sm text-[#C4704A] hover:text-[#A85D3B]"
                           >
                             Visit website
                           </a>
@@ -229,42 +240,42 @@ export default async function TournamentDetailPage({ params }: PageProps) {
             {/* Sidebar */}
             <aside className="space-y-6">
               {/* Registration Card */}
-              <div className="card-texture p-6 sticky top-4">
+              <div className="bg-[#FFFDF9] border border-[#E8E2D9] rounded-lg p-6 sticky top-4">
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
-                    <span className="text-charcoal-light text-sm">Entry Fee</span>
-                    <span className="text-xl font-medium text-terracotta">{feeDisplay}</span>
+                    <span className="text-[#6B6560] text-sm">Entry Fee</span>
+                    <span className="text-xl font-medium text-[#C4704A]">{feeDisplay}</span>
                   </div>
 
                   {tournament.format && (
                     <div className="flex justify-between items-center">
-                      <span className="text-charcoal-light text-sm">Format</span>
-                      <span className="text-charcoal">{tournament.format}</span>
+                      <span className="text-[#6B6560] text-sm">Format</span>
+                      <span className="text-[#2C2C2C]">{tournament.format}</span>
                     </div>
                   )}
 
                   {tournament.max_participants && (
                     <div className="flex justify-between items-center">
-                      <span className="text-charcoal-light text-sm">Max Participants</span>
-                      <span className="text-charcoal">{tournament.max_participants}</span>
+                      <span className="text-[#6B6560] text-sm">Max Participants</span>
+                      <span className="text-[#2C2C2C]">{tournament.max_participants}</span>
                     </div>
                   )}
 
                   {registrationDeadline && (
                     <div className="flex justify-between items-center">
-                      <span className="text-charcoal-light text-sm">Deadline</span>
-                      <span className="text-charcoal">{registrationDeadline}</span>
+                      <span className="text-[#6B6560] text-sm">Deadline</span>
+                      <span className="text-[#2C2C2C]">{registrationDeadline}</span>
                     </div>
                   )}
 
                   {tournament.prize_pool && (
                     <div className="flex justify-between items-center">
-                      <span className="text-charcoal-light text-sm">Prize Pool</span>
-                      <span className="text-brass font-medium">{tournament.prize_pool}</span>
+                      <span className="text-[#6B6560] text-sm">Prize Pool</span>
+                      <span className="text-[#C9A84C] font-medium">{tournament.prize_pool}</span>
                     </div>
                   )}
 
-                  <hr className="border-cream-dark" />
+                  <hr className="border-[#E8E2D9]" />
 
                   {tournament.registration_url ? (
                     <a
@@ -276,7 +287,7 @@ export default async function TournamentDetailPage({ params }: PageProps) {
                       Register Now
                     </a>
                   ) : (
-                    <p className="text-center text-charcoal-light text-sm">
+                    <p className="text-center text-[#6B6560] text-sm">
                       Registration info coming soon
                     </p>
                   )}
@@ -285,10 +296,10 @@ export default async function TournamentDetailPage({ params }: PageProps) {
 
               {/* Results */}
               {(tournament.results_url || tournament.results_summary) && (
-                <div className="card-texture p-6">
-                  <h3 className="font-serif text-lg text-charcoal mb-4">Results</h3>
+                <div className="bg-[#FFFDF9] border border-[#E8E2D9] rounded-lg p-6">
+                  <h3 className="font-serif text-lg text-[#2C2C2C] mb-4">Results</h3>
                   {tournament.results_summary && (
-                    <p className="text-charcoal-light text-sm mb-4">
+                    <p className="text-[#6B6560] text-sm mb-4">
                       {tournament.results_summary}
                     </p>
                   )}
@@ -297,7 +308,7 @@ export default async function TournamentDetailPage({ params }: PageProps) {
                       href={tournament.results_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-court-green hover:text-court-green-light text-sm font-medium"
+                      className="text-[#C4704A] hover:text-[#A85D3B] text-sm font-medium"
                     >
                       View full results &rarr;
                     </a>

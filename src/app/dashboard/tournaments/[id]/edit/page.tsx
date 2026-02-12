@@ -1,23 +1,26 @@
 'use client'
 
-import { useState, useEffect, use } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import Header from '@/components/Header'
 import ImageUpload from '@/components/ImageUpload'
 import { createClient } from '@/lib/supabase'
-import { uploadTournamentImage } from '@/lib/storage'
+import { uploadTournamentImage, deleteTournamentImage } from '@/lib/storage'
 import { FLORIDA_REGIONS, SKILL_LEVELS, TOURNAMENT_FORMATS, TOURNAMENT_CATEGORIES } from '@/lib/constants'
 import { FloridaRegion, SkillLevel, Tournament } from '@/types/database'
 
-export default function EditTournamentPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = use(params)
+export default function EditTournamentPage() {
   const router = useRouter()
+  const params = useParams()
+  const tournamentId = params.id as string
+
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [tournament, setTournament] = useState<Tournament | null>(null)
 
   // Form state
   const [name, setName] = useState('')
@@ -35,8 +38,9 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
   const [maxParticipants, setMaxParticipants] = useState('')
   const [registrationUrl, setRegistrationUrl] = useState('')
   const [prizePool, setPrizePool] = useState('')
+  const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [imageFile, setImageFile] = useState<File | null>(null)
-  const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null)
+  const [imageRemoved, setImageRemoved] = useState(false)
 
   useEffect(() => {
     const loadTournament = async () => {
@@ -49,39 +53,40 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
       }
 
       // Get organizer
-      const { data: organizer } = await supabase
+      const { data: org } = await supabase
         .from('organizers')
         .select('id')
         .eq('user_id', user.id)
         .single()
 
-      if (!organizer) {
+      if (!org) {
         router.push('/onboarding')
         return
       }
 
       // Get tournament
-      const { data: tournament } = await supabase
+      const { data: tourn } = await supabase
         .from('tournaments')
         .select('*')
-        .eq('id', id)
-        .eq('organizer_id', (organizer as any).id)
+        .eq('id', tournamentId)
+        .eq('organizer_id', (org as any).id)
         .single()
 
-      if (!tournament) {
+      if (!tourn) {
         router.push('/dashboard')
         return
       }
 
-      const t = tournament as Tournament
+      const t = tourn as Tournament
+      setTournament(t)
       setName(t.name)
       setDescription(t.description || '')
       setDateStart(t.date_start)
-      setDateEnd(t.date_end)
+      setDateEnd(t.date_end || '')
       setRegistrationDeadline(t.registration_deadline || '')
       setCity(t.city)
-      setRegion(t.region)
-      setLevel(t.level)
+      setRegion(t.region as FloridaRegion)
+      setLevel(t.level as SkillLevel)
       setFormat(t.format || '')
       setCategories(t.categories || [])
       setEntryFeeMin(t.entry_fee_min?.toString() || '')
@@ -89,12 +94,12 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
       setMaxParticipants(t.max_participants?.toString() || '')
       setRegistrationUrl(t.registration_url || '')
       setPrizePool(t.prize_pool || '')
-      setExistingImageUrl(t.image_url || null)
+      setImageUrl(t.image_url)
       setLoading(false)
     }
 
     loadTournament()
-  }, [id, router])
+  }, [router, tournamentId])
 
   const handleCategoryToggle = (category: string) => {
     setCategories(prev =>
@@ -106,23 +111,34 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!tournament) return
+
     setSaving(true)
     setError(null)
+    setSuccess(false)
 
-    // Upload new image if provided
-    let imageUrl = existingImageUrl
+    // Handle image changes
+    let newImageUrl = imageUrl
+
+    if (imageRemoved && imageUrl) {
+      await deleteTournamentImage(imageUrl)
+      newImageUrl = null
+    }
+
     if (imageFile) {
-      const uploadedUrl = await uploadTournamentImage(imageFile, id)
-      if (!uploadedUrl) {
+      if (imageUrl) {
+        await deleteTournamentImage(imageUrl)
+      }
+      newImageUrl = await uploadTournamentImage(imageFile, tournament.id)
+      if (!newImageUrl) {
         setError('Failed to upload image. Please try again.')
         setSaving(false)
         return
       }
-      imageUrl = uploadedUrl
     }
 
-    const supabase = createClient() as any
-    const { error } = await supabase
+    const supabase = createClient()
+    const { error } = await (supabase as any)
       .from('tournaments')
       .update({
         name,
@@ -140,25 +156,37 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
         max_participants: maxParticipants ? parseInt(maxParticipants) : null,
         registration_url: registrationUrl || null,
         prize_pool: prizePool || null,
-        image_url: imageUrl,
+        image_url: newImageUrl,
       })
-      .eq('id', id)
+      .eq('id', tournament.id)
 
     if (error) {
       setError(error.message)
-      setSaving(false)
     } else {
-      router.push('/dashboard')
+      setImageUrl(newImageUrl)
+      setImageFile(null)
+      setImageRemoved(false)
+      setSuccess(true)
     }
+    setSaving(false)
   }
 
   const handleDelete = async () => {
+    if (!tournament) return
+    if (!confirm('Are you sure you want to delete this tournament? This cannot be undone.')) return
+
     setDeleting(true)
+    setError(null)
+
+    if (tournament.image_url) {
+      await deleteTournamentImage(tournament.image_url)
+    }
+
     const supabase = createClient()
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from('tournaments')
       .delete()
-      .eq('id', id)
+      .eq('id', tournament.id)
 
     if (error) {
       setError(error.message)
@@ -170,45 +198,52 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-4 border-orange-500 border-t-transparent rounded-full" />
+      <div className="min-h-screen bg-[#FAF7F2] flex items-center justify-center">
+        <div className="animate-spin w-8 h-8 border-4 border-[#C4704A] border-t-transparent rounded-full" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#FAF7F2]">
       <Header />
 
-      <div className="max-w-2xl mx-auto py-10 px-4">
-        <div className="flex items-center gap-4 mb-8">
-          <Link
-            href="/dashboard"
-            className="p-2 -ml-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </Link>
+      <div className="max-w-2xl mx-auto py-12 px-4">
+        <div className="flex items-center justify-between mb-10">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Edit Tournament</h1>
-            <p className="text-gray-500 text-sm mt-0.5">Update your tournament details</p>
+            <Link href="/dashboard" className="text-sm text-[#6B6560] hover:text-[#C4704A] mb-2 inline-block">
+              &larr; Back to Dashboard
+            </Link>
+            <h1 className="text-3xl text-[#2C2C2C]">Edit Tournament</h1>
           </div>
+          <button
+            onClick={handleDelete}
+            disabled={deleting}
+            className="px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded transition-colors disabled:opacity-50"
+          >
+            {deleting ? 'Deleting...' : 'Delete'}
+          </button>
         </div>
 
+        {success && (
+          <div className="bg-[#2D4A3E]/10 border border-[#2D4A3E]/20 text-[#2D4A3E] px-4 py-3 rounded mb-6 text-sm">
+            Tournament updated successfully.
+          </div>
+        )}
+
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6 text-sm">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6 text-sm">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-8">
           {/* Basic Info */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h2>
+          <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6">
+            <h2 className="font-serif text-lg text-[#2C2C2C] mb-4">Basic Information</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                   Tournament Name <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -219,39 +254,44 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
                   className="w-full"
                 />
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                   Description
                 </label>
                 <textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   rows={4}
-                  className="w-full bg-white border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 resize-none"
+                  className="w-full bg-[#FFFDF9] border border-[#E8E2D9] rounded px-4 py-3 focus:outline-none focus:border-[#C4704A] focus:ring-1 focus:ring-[#C4704A]/20 resize-none text-[#2C2C2C] placeholder-[#9A948D]"
                 />
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#2C2C2C] mb-2">
                   Tournament Flyer
                 </label>
                 <ImageUpload
-                  value={existingImageUrl}
-                  onChange={(file) => setImageFile(file)}
-                  onRemove={() => setExistingImageUrl(null)}
+                  value={imageRemoved ? null : imageUrl}
+                  onChange={(file) => {
+                    setImageFile(file)
+                    setImageRemoved(false)
+                  }}
+                  onRemove={() => {
+                    setImageRemoved(true)
+                    setImageFile(null)
+                  }}
                 />
-                <p className="text-xs text-gray-400 mt-2">
-                  Upload a square image for your tournament flyer
-                </p>
               </div>
             </div>
           </div>
 
           {/* Date & Location */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Date & Location</h2>
+          <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6">
+            <h2 className="font-serif text-lg text-[#2C2C2C] mb-4">Date & Location</h2>
             <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                   Start Date <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -262,8 +302,9 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
                   className="w-full"
                 />
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                   End Date
                 </label>
                 <input
@@ -273,8 +314,9 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
                   className="w-full"
                 />
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                   City <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -285,8 +327,9 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
                   className="w-full"
                 />
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                   Region <span className="text-red-500">*</span>
                 </label>
                 <select
@@ -303,12 +346,12 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
           </div>
 
           {/* Tournament Details */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Tournament Details</h2>
+          <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6">
+            <h2 className="font-serif text-lg text-[#2C2C2C] mb-4">Tournament Details</h2>
             <div className="space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                     Skill Level <span className="text-red-500">*</span>
                   </label>
                   <select
@@ -321,8 +364,9 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
                     ))}
                   </select>
                 </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                     Format
                   </label>
                   <select
@@ -337,8 +381,9 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
                   </select>
                 </div>
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-[#2C2C2C] mb-2">
                   Categories
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -349,8 +394,8 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
                       onClick={() => handleCategoryToggle(cat)}
                       className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${
                         categories.includes(cat)
-                          ? 'bg-orange-500 text-white'
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          ? 'bg-[#C4704A] text-white'
+                          : 'bg-[#F5F0E8] text-[#6B6560] hover:bg-[#E8E2D9]'
                       }`}
                     >
                       {cat}
@@ -362,11 +407,11 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
           </div>
 
           {/* Registration */}
-          <div className="bg-white rounded-xl border border-gray-200 p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Registration</h2>
+          <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6">
+            <h2 className="font-serif text-lg text-[#2C2C2C] mb-4">Registration</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                   Registration Deadline
                 </label>
                 <input
@@ -376,8 +421,9 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
                   className="w-full"
                 />
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                   Registration URL
                 </label>
                 <input
@@ -387,9 +433,10 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
                   className="w-full"
                 />
               </div>
+
               <div className="grid sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                     Entry Fee (Min)
                   </label>
                   <input
@@ -400,8 +447,9 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
                     min="0"
                   />
                 </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                     Entry Fee (Max)
                   </label>
                   <input
@@ -412,8 +460,9 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
                     min="0"
                   />
                 </div>
+
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                  <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                     Max Participants
                   </label>
                   <input
@@ -425,8 +474,9 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
                   />
                 </div>
               </div>
+
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
                   Prize Pool
                 </label>
                 <input
@@ -439,57 +489,14 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
             </div>
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center justify-between pt-4">
-            <button
-              type="button"
-              onClick={() => setShowDeleteConfirm(true)}
-              className="text-red-600 hover:text-red-700 font-medium text-sm"
-            >
-              Delete Tournament
-            </button>
-            <div className="flex items-center gap-3">
-              <Link href="/dashboard" className="btn-secondary">
-                Cancel
-              </Link>
-              <button
-                type="submit"
-                disabled={saving}
-                className="btn-primary disabled:opacity-50"
-              >
-                {saving ? 'Saving...' : 'Save Changes'}
-              </button>
-            </div>
-          </div>
+          <button
+            type="submit"
+            disabled={saving}
+            className="btn-primary w-full disabled:opacity-50"
+          >
+            {saving ? 'Saving...' : 'Save Changes'}
+          </button>
         </form>
-
-        {/* Delete Confirmation Modal */}
-        {showDeleteConfirm && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl max-w-md w-full p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Delete Tournament?</h3>
-              <p className="text-gray-500 mb-6">
-                This action cannot be undone. The tournament will be permanently removed.
-              </p>
-              <div className="flex items-center justify-end gap-3">
-                <button
-                  onClick={() => setShowDeleteConfirm(false)}
-                  className="btn-secondary"
-                  disabled={deleting}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleDelete}
-                  disabled={deleting}
-                  className="px-5 py-2.5 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
-                >
-                  {deleting ? 'Deleting...' : 'Delete'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   )
