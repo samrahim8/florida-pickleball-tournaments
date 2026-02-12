@@ -5,9 +5,9 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Header from '@/components/Header'
 import { createClient } from '@/lib/supabase'
-import { Tournament, TournamentStatus } from '@/types/database'
+import { Tournament } from '@/types/database'
 
-type StatusFilter = 'all' | TournamentStatus
+type StatusFilter = 'all' | 'pending' | 'approved' | 'rejected'
 
 export default function AdminDashboard() {
   const router = useRouter()
@@ -70,7 +70,7 @@ export default function AdminDashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusFilter])
 
-  const updateStatus = async (id: string, status: TournamentStatus) => {
+  const updateStatus = async (id: string, status: 'pending' | 'approved' | 'rejected') => {
     setUpdating(id)
     const supabase = createClient()
     await supabase
