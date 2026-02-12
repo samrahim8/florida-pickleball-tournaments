@@ -99,26 +99,47 @@ export default function DashboardPage() {
   }
 
   const pendingCount = tournaments.filter(t => t.status === 'pending').length
-  const approvedCount = tournaments.filter(t => t.status === 'approved').length
-  const upcomingCount = tournaments.filter(t => {
-    const now = new Date()
-    const start = new Date(t.date_start)
-    return t.status === 'approved' && now < start
-  }).length
+  const approvedCount = tournaments.filter(t => t.status === 'approved' || t.status === 'active' || t.status === 'upcoming').length
+
+  // Empty state - clean and focused
+  if (tournaments.length === 0) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <div className="max-w-lg mx-auto py-20 px-4 text-center">
+          <div className="w-20 h-20 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-10 h-10 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            Welcome, {organizer?.name?.split(' ')[0] || 'Organizer'}!
+          </h1>
+          <p className="text-gray-500 mb-8 max-w-sm mx-auto">
+            Ready to list your first tournament? It only takes a few minutes.
+          </p>
+          <Link href="/submit" className="btn-primary inline-flex items-center gap-2">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
+            Submit Your First Tournament
+          </Link>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
 
       <div className="max-w-5xl mx-auto py-10 px-4">
-        {/* Welcome Section */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10">
+        {/* Header with stats inline */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              Welcome back, {organizer?.name?.split(' ')[0] || 'Organizer'}
-            </h1>
+            <h1 className="text-2xl font-bold text-gray-900">Your Tournaments</h1>
             <p className="text-gray-500 mt-1">
-              Manage your tournaments and submissions
+              {approvedCount} approved · {pendingCount} pending review
             </p>
           </div>
           <Link href="/submit" className="btn-primary inline-flex items-center gap-2">
@@ -129,45 +150,9 @@ export default function DashboardPage() {
           </Link>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-3 gap-4 mb-10">
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
-            <div className="text-3xl font-bold text-gray-900">{tournaments.length}</div>
-            <div className="text-sm text-gray-500 mt-1">Total Tournaments</div>
-          </div>
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
-            <div className="text-3xl font-bold text-green-600">{approvedCount}</div>
-            <div className="text-sm text-gray-500 mt-1">Approved</div>
-          </div>
-          <div className="bg-white rounded-xl border border-gray-200 p-5">
-            <div className="text-3xl font-bold text-yellow-600">{pendingCount}</div>
-            <div className="text-sm text-gray-500 mt-1">Pending Review</div>
-          </div>
-        </div>
-
         {/* Tournaments List */}
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100">
-            <h2 className="font-semibold text-gray-900">Your Tournaments</h2>
-          </div>
-
-          {tournaments.length === 0 ? (
-            <div className="p-12 text-center">
-              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-              <h3 className="font-medium text-gray-900 mb-1">No tournaments yet</h3>
-              <p className="text-gray-500 text-sm mb-6">
-                Submit your first tournament to get started
-              </p>
-              <Link href="/submit" className="btn-primary">
-                Submit Tournament
-              </Link>
-            </div>
-          ) : (
-            <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-gray-100">
               {tournaments.map((tournament) => (
                 <div key={tournament.id} className="px-6 py-4 hover:bg-gray-50 transition-colors">
                   <div className="flex items-start justify-between gap-4">
@@ -227,7 +212,6 @@ export default function DashboardPage() {
                 </div>
               ))}
             </div>
-          )}
         </div>
       </div>
     </div>
