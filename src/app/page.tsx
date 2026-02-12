@@ -47,27 +47,32 @@ export default async function Home() {
   ])
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col">
       <Header />
 
       {/* Hero */}
-      <section className="py-20 md:py-28 bg-gradient-to-b from-gray-50 to-white">
-        <div className="max-w-6xl mx-auto px-4">
+      <section className="py-24 md:py-32 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#FAF7F2] via-[#FAF7F2] to-[#F5F0E8]" />
+        <div className="max-w-6xl mx-auto px-4 relative">
           <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-6xl font-bold text-gray-900 leading-tight tracking-tight">
-              Find pickleball tournaments in{' '}
-              <span className="text-orange-500">Florida</span>
+            <p className="text-[#C4704A] font-medium tracking-wide uppercase text-sm mb-4">
+              The Sunshine State&apos;s Premier Directory
+            </p>
+            <h1 className="text-4xl md:text-6xl leading-tight tracking-tight text-[#2C2C2C]">
+              Discover Pickleball{' '}
+              <span className="italic">Tournaments</span>{' '}
+              <span className="text-[#C4704A]">in Florida</span>
             </h1>
-            <p className="mt-6 text-xl text-gray-600 leading-relaxed max-w-2xl">
-              The complete guide to tournaments across the Sunshine State.
-              From South Florida to the Panhandle.
+            <p className="mt-6 text-lg text-[#6B6560] leading-relaxed max-w-xl">
+              From the courts of South Florida to the Panhandle.
+              Find your next competition, connect with the community.
             </p>
             <div className="mt-10 flex flex-wrap gap-4">
               <Link href="/tournaments" className="btn-primary">
                 Browse Tournaments
               </Link>
               <Link href="/submit" className="btn-secondary">
-                Submit a Tournament
+                List Your Tournament
               </Link>
             </div>
           </div>
@@ -75,15 +80,16 @@ export default async function Home() {
       </section>
 
       {/* Region Quick Links */}
-      <section className="py-6 border-y border-gray-100">
+      <section className="py-6 border-y border-[#E8E2D9] bg-[#FFFDF9]">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex flex-wrap items-center gap-3">
-            <span className="text-sm text-gray-500 font-medium">Regions:</span>
+            <span className="text-sm text-[#9A948D] font-medium uppercase tracking-wide">Regions</span>
+            <span className="text-[#D4CCC0]">|</span>
             {FLORIDA_REGIONS.map((region) => (
               <Link
                 key={region}
                 href={`/tournaments?region=${encodeURIComponent(region)}`}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 rounded-full hover:bg-orange-50 hover:text-orange-600 transition-colors"
+                className="px-4 py-2 text-sm font-medium text-[#6B6560] hover:text-[#C4704A] transition-colors"
               >
                 {region}
               </Link>
@@ -95,12 +101,12 @@ export default async function Home() {
       <main className="flex-grow">
         {/* Featured Tournaments */}
         {featured.length > 0 && (
-          <section className="py-16">
+          <section className="py-20 bg-[#FFFDF9]">
             <div className="max-w-6xl mx-auto px-4">
-              <div className="flex items-center gap-3 mb-8">
+              <div className="flex items-center gap-4 mb-10">
                 <span className="badge badge-orange">Featured</span>
-                <h2 className="text-2xl font-bold text-gray-900">
-                  Don&apos;t miss these
+                <h2 className="text-2xl text-[#2C2C2C]">
+                  Don&apos;t Miss These
                 </h2>
               </div>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -113,43 +119,44 @@ export default async function Home() {
         )}
 
         {/* Upcoming Tournaments */}
-        <section className={`py-16 ${featured.length > 0 ? 'bg-gray-50' : ''}`}>
+        <section className={`py-20 ${featured.length > 0 ? 'bg-[#FAF7F2]' : 'bg-[#FFFDF9]'}`}>
           <div className="max-w-6xl mx-auto px-4">
-            <div className="flex items-end justify-between mb-8">
+            <div className="flex items-end justify-between mb-10">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">
+                <h2 className="text-2xl text-[#2C2C2C]">
                   Upcoming Tournaments
                 </h2>
-                <p className="text-gray-500 mt-1">
+                <p className="text-[#9A948D] mt-2">
                   {upcoming.length} tournaments on the calendar
                 </p>
               </div>
               <Link
                 href="/tournaments"
-                className="hidden sm:inline-flex items-center gap-1 text-orange-600 hover:text-orange-700 font-medium"
+                className="hidden sm:inline-flex items-center gap-2 text-[#C4704A] hover:text-[#A85D3B] font-medium transition-colors"
               >
                 View all
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
               </Link>
             </div>
 
             {upcoming.length > 0 ? (
-              <div className="grid md:grid-cols-2 gap-5">
+              <div className="grid md:grid-cols-2 gap-6">
                 {upcoming.map((tournament) => (
                   <TournamentCard key={tournament.id} tournament={tournament} />
                 ))}
               </div>
             ) : (
-              <div className="card p-12 text-center">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="card p-16 text-center">
+                <div className="w-16 h-16 bg-[#F5F0E8] rounded-full flex items-center justify-center mx-auto mb-6">
+                  <svg className="w-8 h-8 text-[#9A948D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
                 </div>
-                <p className="text-gray-600 mb-4">
-                  No upcoming tournaments at the moment.
+                <h3 className="text-xl text-[#2C2C2C] mb-2">No Upcoming Tournaments</h3>
+                <p className="text-[#6B6560] mb-8 max-w-sm mx-auto">
+                  Be the first to list a tournament and connect with players across Florida.
                 </p>
                 <Link href="/submit" className="btn-primary">
                   Submit a Tournament
@@ -157,10 +164,10 @@ export default async function Home() {
               </div>
             )}
 
-            <div className="sm:hidden mt-8 text-center">
+            <div className="sm:hidden mt-10 text-center">
               <Link
                 href="/tournaments"
-                className="text-orange-600 hover:text-orange-700 font-medium"
+                className="text-[#C4704A] hover:text-[#A85D3B] font-medium"
               >
                 View all tournaments →
               </Link>
@@ -169,14 +176,14 @@ export default async function Home() {
         </section>
 
         {/* Newsletter */}
-        <section className="py-20 bg-gray-900">
+        <section className="py-24 bg-[#2D4A3E]">
           <div className="max-w-6xl mx-auto px-4">
             <div className="max-w-xl mx-auto text-center">
-              <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
-                Stay in the loop
+              <h2 className="text-2xl md:text-3xl text-white mb-4">
+                Stay in the Loop
               </h2>
-              <p className="text-gray-400 mb-8">
-                Get notified when new tournaments are added in your region. No spam.
+              <p className="text-[#7A8B7A] mb-8">
+                Get notified when new tournaments are added in your region. No spam, ever.
               </p>
               <NewsletterSignup />
             </div>
