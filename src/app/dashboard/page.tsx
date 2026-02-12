@@ -61,13 +61,18 @@ export default function DashboardPage() {
     const now = new Date()
     const start = new Date(tournament.date_start)
     const end = new Date(tournament.date_end)
+    const status = tournament.status
 
-    if (tournament.status === 'pending') {
+    if (status === 'pending') {
       return <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-700">Pending Review</span>
     }
-    if (tournament.status === 'rejected') {
+    if (status === 'rejected') {
       return <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-red-100 text-red-700">Rejected</span>
     }
+    if (status === 'cancelled') {
+      return <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-600">Cancelled</span>
+    }
+    // For approved/active tournaments, show date-based status
     if (now < start) {
       return <span className="px-2.5 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-700">Upcoming</span>
     }

@@ -104,7 +104,7 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
     setSaving(true)
     setError(null)
 
-    const supabase = createClient()
+    const supabase = createClient() as any
     const { error } = await supabase
       .from('tournaments')
       .update({
@@ -123,7 +123,7 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
         max_participants: maxParticipants ? parseInt(maxParticipants) : null,
         registration_url: registrationUrl || null,
         prize_pool: prizePool || null,
-      } as any)
+      })
       .eq('id', id)
 
     if (error) {

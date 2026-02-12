@@ -12,7 +12,7 @@ export type SkillLevel =
   | 'Seniors (50+)'
   | 'All Levels'
 
-export type TournamentStatus = 'pending' | 'upcoming' | 'active' | 'completed' | 'cancelled'
+export type TournamentStatus = 'pending' | 'approved' | 'rejected' | 'upcoming' | 'active' | 'completed' | 'cancelled'
 
 export type TournamentTier = 'free' | 'pro' | 'premium'
 
