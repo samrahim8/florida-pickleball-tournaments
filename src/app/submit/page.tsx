@@ -55,7 +55,7 @@ export default function SubmitTournamentPage() {
         return
       }
 
-      setOrganizerId(organizer.id)
+      setOrganizerId((organizer as any).id)
       setLoading(false)
     }
 
