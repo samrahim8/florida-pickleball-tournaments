@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import Header from '@/components/Header'
 import ImageUpload from '@/components/ImageUpload'
+import LocationAutocomplete from '@/components/LocationAutocomplete'
 import { createClient } from '@/lib/supabase'
 import { uploadTournamentImage, deleteTournamentImage } from '@/lib/storage'
 import { FLORIDA_REGIONS, SKILL_LEVELS, TOURNAMENT_FORMATS, TOURNAMENT_CATEGORIES } from '@/lib/constants'
@@ -41,6 +42,10 @@ export default function EditTournamentPage() {
   const [imageUrl, setImageUrl] = useState<string | null>(null)
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imageRemoved, setImageRemoved] = useState(false)
+  const [venueName, setVenueName] = useState('')
+  const [venueAddress, setVenueAddress] = useState('')
+  const [lat, setLat] = useState<number | null>(null)
+  const [lng, setLng] = useState<number | null>(null)
 
   useEffect(() => {
     const loadTournament = async () => {
@@ -95,6 +100,10 @@ export default function EditTournamentPage() {
       setRegistrationUrl(t.registration_url || '')
       setPrizePool(t.prize_pool || '')
       setImageUrl(t.image_url)
+      setVenueName(t.venue_name || '')
+      setVenueAddress(t.venue_address || '')
+      setLat(t.lat || null)
+      setLng(t.lng || null)
       setLoading(false)
     }
 
@@ -157,6 +166,10 @@ export default function EditTournamentPage() {
         registration_url: registrationUrl || null,
         prize_pool: prizePool || null,
         image_url: newImageUrl,
+        venue_name: venueName || null,
+        venue_address: venueAddress || null,
+        lat: lat,
+        lng: lng,
       })
       .eq('id', tournament.id)
 
@@ -289,58 +302,89 @@ export default function EditTournamentPage() {
           {/* Date & Location */}
           <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6">
             <h2 className="font-serif text-lg text-[#2C2C2C] mb-4">Date & Location</h2>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
-                  Start Date <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="date"
-                  value={dateStart}
-                  onChange={(e) => setDateStart(e.target.value)}
-                  required
-                  className="w-full"
-                />
+            <div className="space-y-4">
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
+                    Start Date <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    value={dateStart}
+                    onChange={(e) => setDateStart(e.target.value)}
+                    required
+                    className="w-full"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
+                    End Date
+                  </label>
+                  <input
+                    type="date"
+                    value={dateEnd}
+                    onChange={(e) => setDateEnd(e.target.value)}
+                    className="w-full"
+                  />
+                </div>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
-                  End Date
+                  Venue Location
                 </label>
-                <input
-                  type="date"
-                  value={dateEnd}
-                  onChange={(e) => setDateEnd(e.target.value)}
-                  className="w-full"
+                <LocationAutocomplete
+                  value={venueName}
+                  onChange={(place) => {
+                    if (place) {
+                      setVenueName(place.name)
+                      setVenueAddress(place.address)
+                      setCity(place.city || city)
+                      setLat(place.lat)
+                      setLng(place.lng)
+                    } else {
+                      setVenueName('')
+                      setVenueAddress('')
+                      setLat(null)
+                      setLng(null)
+                    }
+                  }}
+                  placeholder="Search for a venue..."
                 />
+                {venueAddress && (
+                  <p className="text-xs text-[#6B6560] mt-1">{venueAddress}</p>
+                )}
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
-                  City <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  required
-                  className="w-full"
-                />
-              </div>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
+                    City <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    required
+                    className="w-full"
+                  />
+                </div>
 
-              <div>
-                <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
-                  Region <span className="text-red-500">*</span>
-                </label>
-                <select
-                  value={region}
-                  onChange={(e) => setRegion(e.target.value as FloridaRegion)}
-                  className="w-full"
-                >
-                  {FLORIDA_REGIONS.map(r => (
-                    <option key={r} value={r}>{r}</option>
-                  ))}
-                </select>
+                <div>
+                  <label className="block text-sm font-medium text-[#2C2C2C] mb-1.5">
+                    Region <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={region}
+                    onChange={(e) => setRegion(e.target.value as FloridaRegion)}
+                    className="w-full"
+                  >
+                    {FLORIDA_REGIONS.map(r => (
+                      <option key={r} value={r}>{r}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
           </div>

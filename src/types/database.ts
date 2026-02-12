@@ -75,6 +75,10 @@ export interface Tournament {
   city: string
   county: string | null
   region: FloridaRegion
+  venue_name: string | null
+  venue_address: string | null
+  lat: number | null
+  lng: number | null
   level: SkillLevel
   categories: string[]
   featured: boolean
