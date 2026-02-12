@@ -37,6 +37,7 @@ export interface Organizer {
   logo_url: string | null
   bio: string | null
   verified: boolean
+  is_admin: boolean
   user_id: string | null
   created_at: string
   updated_at: string
