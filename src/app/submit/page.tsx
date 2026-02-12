@@ -29,6 +29,7 @@ export default function SubmitTournamentPage() {
   const [region, setRegion] = useState<FloridaRegion>('South Florida')
   const [venueName, setVenueName] = useState('')
   const [venueAddress, setVenueAddress] = useState('')
+  const [county, setCounty] = useState('')
   const [lat, setLat] = useState<number | null>(null)
   const [lng, setLng] = useState<number | null>(null)
   const [level, setLevel] = useState<SkillLevel>('All Levels')
@@ -87,16 +88,19 @@ export default function SubmitTournamentPage() {
     )
   }
 
-  const handleLocationSelect = (place: { name: string; address: string; city: string; lat: number; lng: number } | null) => {
+  const handleLocationSelect = (place: { name: string; address: string; city: string; county: string; region: FloridaRegion; lat: number; lng: number } | null) => {
     if (place) {
       setVenueName(place.name)
       setVenueAddress(place.address)
       setCity(place.city || city) // Keep existing city if not found
+      setCounty(place.county)
+      setRegion(place.region) // Auto-set region based on county
       setLat(place.lat)
       setLng(place.lng)
     } else {
       setVenueName('')
       setVenueAddress('')
+      setCounty('')
       setLat(null)
       setLng(null)
     }
@@ -133,6 +137,7 @@ export default function SubmitTournamentPage() {
       date_end: dateEnd || dateStart,
       registration_deadline: registrationDeadline || null,
       city,
+      county: county || null,
       region,
       venue_name: venueName || null,
       venue_address: venueAddress || null,
@@ -202,6 +207,7 @@ export default function SubmitTournamentPage() {
     setDateEnd('')
     setRegistrationDeadline('')
     setCity('')
+    setCounty('')
     setRegion('South Florida')
     setVenueName('')
     setVenueAddress('')

@@ -1,11 +1,14 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
+import { FloridaRegion } from '@/types/database'
 
 interface PlaceResult {
   name: string
   address: string
   city: string
+  county: string
+  region: FloridaRegion
   lat: number
   lng: number
 }
@@ -14,6 +17,86 @@ interface LocationAutocompleteProps {
   value: string
   onChange: (place: PlaceResult | null) => void
   placeholder?: string
+}
+
+// Florida county to region mapping
+const COUNTY_TO_REGION: Record<string, FloridaRegion> = {
+  // South Florida
+  'Miami-Dade': 'South Florida',
+  'Broward': 'South Florida',
+  'Palm Beach': 'South Florida',
+  'Monroe': 'South Florida',
+
+  // Central Florida
+  'Orange': 'Central Florida',
+  'Osceola': 'Central Florida',
+  'Seminole': 'Central Florida',
+  'Lake': 'Central Florida',
+  'Volusia': 'Central Florida',
+  'Brevard': 'Central Florida',
+  'Indian River': 'Central Florida',
+  'St. Lucie': 'Central Florida',
+  'Martin': 'Central Florida',
+  'Polk': 'Central Florida',
+  'Sumter': 'Central Florida',
+  'Marion': 'Central Florida',
+
+  // Tampa Bay
+  'Hillsborough': 'Tampa Bay',
+  'Pinellas': 'Tampa Bay',
+  'Pasco': 'Tampa Bay',
+  'Hernando': 'Tampa Bay',
+  'Manatee': 'Tampa Bay',
+  'Sarasota': 'Tampa Bay',
+  'Charlotte': 'Tampa Bay',
+  'Lee': 'Tampa Bay',
+  'Collier': 'Tampa Bay',
+
+  // North Florida
+  'Duval': 'North Florida',
+  'St. Johns': 'North Florida',
+  'Clay': 'North Florida',
+  'Nassau': 'North Florida',
+  'Baker': 'North Florida',
+  'Putnam': 'North Florida',
+  'Flagler': 'North Florida',
+  'Alachua': 'North Florida',
+  'Bradford': 'North Florida',
+  'Columbia': 'North Florida',
+  'Union': 'North Florida',
+  'Suwannee': 'North Florida',
+  'Hamilton': 'North Florida',
+  'Madison': 'North Florida',
+  'Taylor': 'North Florida',
+  'Lafayette': 'North Florida',
+  'Dixie': 'North Florida',
+  'Gilchrist': 'North Florida',
+  'Levy': 'North Florida',
+  'Citrus': 'North Florida',
+
+  // Panhandle
+  'Escambia': 'Panhandle',
+  'Santa Rosa': 'Panhandle',
+  'Okaloosa': 'Panhandle',
+  'Walton': 'Panhandle',
+  'Holmes': 'Panhandle',
+  'Washington': 'Panhandle',
+  'Bay': 'Panhandle',
+  'Jackson': 'Panhandle',
+  'Calhoun': 'Panhandle',
+  'Gulf': 'Panhandle',
+  'Liberty': 'Panhandle',
+  'Franklin': 'Panhandle',
+  'Gadsden': 'Panhandle',
+  'Leon': 'Panhandle',
+  'Wakulla': 'Panhandle',
+  'Jefferson': 'Panhandle',
+}
+
+function getRegionFromCounty(county: string): FloridaRegion {
+  // Remove " County" suffix if present
+  const cleanCounty = county.replace(/ County$/i, '')
+  return COUNTY_TO_REGION[cleanCounty] || 'Central Florida'
 }
 
 export default function LocationAutocomplete({
@@ -83,7 +166,7 @@ export default function LocationAutocomplete({
         locationBias: {
           center: { lat: 27.6648, lng: -81.5158 },
           radius: 500000, // 500km radius covering Florida
-        } as any,
+        } as google.maps.places.LocationBias,
         types: ['establishment', 'geocode'],
       },
       (predictions, status) => {
@@ -117,18 +200,28 @@ export default function LocationAutocomplete({
       },
       (place, status) => {
         if (status === google.maps.places.PlacesServiceStatus.OK && place) {
-          // Extract city from address components
+          // Extract city and county from address components
           let city = ''
+          let county = ''
+
           place.address_components?.forEach((component) => {
             if (component.types.includes('locality')) {
               city = component.long_name
             }
+            if (component.types.includes('administrative_area_level_2')) {
+              county = component.long_name
+            }
           })
+
+          // Determine region from county
+          const region = getRegionFromCounty(county)
 
           const result: PlaceResult = {
             name: place.name || prediction.structured_formatting.main_text,
             address: place.formatted_address || prediction.description,
             city: city,
+            county: county.replace(/ County$/i, ''),
+            region: region,
             lat: place.geometry?.location?.lat() || 0,
             lng: place.geometry?.location?.lng() || 0,
           }
@@ -153,12 +246,6 @@ export default function LocationAutocomplete({
   return (
     <div ref={containerRef} className="relative">
       <div className="relative">
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-          <svg className="w-5 h-5 text-[#9A948D]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-        </div>
         <input
           ref={inputRef}
           type="text"
@@ -166,7 +253,7 @@ export default function LocationAutocomplete({
           onChange={handleInputChange}
           onFocus={() => suggestions.length > 0 && setIsOpen(true)}
           placeholder={placeholder}
-          className="w-full pl-10 pr-10"
+          className="w-full pr-10"
         />
         {inputValue && (
           <button

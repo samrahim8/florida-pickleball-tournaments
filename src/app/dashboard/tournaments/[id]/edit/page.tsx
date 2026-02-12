@@ -44,6 +44,7 @@ export default function EditTournamentPage() {
   const [imageRemoved, setImageRemoved] = useState(false)
   const [venueName, setVenueName] = useState('')
   const [venueAddress, setVenueAddress] = useState('')
+  const [county, setCounty] = useState('')
   const [lat, setLat] = useState<number | null>(null)
   const [lng, setLng] = useState<number | null>(null)
 
@@ -102,6 +103,7 @@ export default function EditTournamentPage() {
       setImageUrl(t.image_url)
       setVenueName(t.venue_name || '')
       setVenueAddress(t.venue_address || '')
+      setCounty(t.county || '')
       setLat(t.lat || null)
       setLng(t.lng || null)
       setLoading(false)
@@ -156,6 +158,7 @@ export default function EditTournamentPage() {
         date_end: dateEnd || dateStart,
         registration_deadline: registrationDeadline || null,
         city,
+        county: county || null,
         region,
         level,
         format: format || null,
@@ -341,11 +344,14 @@ export default function EditTournamentPage() {
                       setVenueName(place.name)
                       setVenueAddress(place.address)
                       setCity(place.city || city)
+                      setCounty(place.county)
+                      setRegion(place.region)
                       setLat(place.lat)
                       setLng(place.lng)
                     } else {
                       setVenueName('')
                       setVenueAddress('')
+                      setCounty('')
                       setLat(null)
                       setLng(null)
                     }
