@@ -61,6 +61,9 @@ export default function Header() {
               <>
                 {user ? (
                   <div className="flex items-center gap-4">
+                    <Link href="/dashboard" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
+                      Dashboard
+                    </Link>
                     <Link href="/submit" className="btn-primary text-sm py-2.5 px-5">
                       Submit Tournament
                     </Link>
@@ -111,6 +114,13 @@ export default function Header() {
               <>
                 {user ? (
                   <>
+                    <Link
+                      href="/dashboard"
+                      className="text-gray-700 hover:text-gray-900 font-medium py-2"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
                     <Link
                       href="/submit"
                       className="btn-primary text-center mt-2"

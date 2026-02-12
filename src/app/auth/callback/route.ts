@@ -21,9 +21,9 @@ export async function GET(request: Request) {
           .eq('user_id', user.id)
           .single()
 
-        // If they have an organizer profile, go to submit page
+        // If they have an organizer profile, go to dashboard
         // Otherwise, go to onboarding
-        const redirectTo = organizer ? '/submit' : '/onboarding'
+        const redirectTo = organizer ? '/dashboard' : '/onboarding'
         return NextResponse.redirect(`${origin}${redirectTo}`)
       }
     }
