@@ -9,6 +9,7 @@ export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [user, setUser] = useState<User | null>(null)
+  const [isAdmin, setIsAdmin] = useState(false)
   const [loading, setLoading] = useState(true)
   const userMenuRef = useRef<HTMLDivElement>(null)
 
@@ -18,6 +19,18 @@ export default function Header() {
     const getUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       setUser(user)
+
+      // Check if user is admin
+      if (user) {
+        const { data: organizer } = await supabase
+          .from('organizers')
+          .select('is_admin')
+          .eq('user_id', user.id)
+          .single()
+
+        setIsAdmin((organizer as any)?.is_admin || false)
+      }
+
       setLoading(false)
     }
 
@@ -25,6 +38,9 @@ export default function Header() {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
+      if (!session?.user) {
+        setIsAdmin(false)
+      }
     })
 
     return () => subscription.unsubscribe()
@@ -79,6 +95,11 @@ export default function Header() {
                     <Link href="/dashboard" className="text-[#6B6560] hover:text-[#2C2C2C] font-medium transition-colors text-sm tracking-wide">
                       Dashboard
                     </Link>
+                    {isAdmin && (
+                      <Link href="/admin" className="text-[#2D4A3E] hover:text-[#1e3329] font-medium transition-colors text-sm tracking-wide">
+                        Admin
+                      </Link>
+                    )}
                     {/* User dropdown */}
                     <div className="relative" ref={userMenuRef}>
                       <button
@@ -168,6 +189,15 @@ export default function Header() {
                     >
                       Dashboard
                     </Link>
+                    {isAdmin && (
+                      <Link
+                        href="/admin"
+                        className="text-[#2D4A3E] hover:text-[#1e3329] font-medium py-3 transition-colors"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Admin Dashboard
+                      </Link>
+                    )}
                     <Link
                       href="/account"
                       className="text-[#6B6560] hover:text-[#2C2C2C] font-medium py-3 transition-colors"
