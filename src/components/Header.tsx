@@ -56,9 +56,6 @@ export default function Header() {
             <Link href="/tournaments" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
               Browse
             </Link>
-            <Link href="/tournaments?region=South+Florida" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
-              Regions
-            </Link>
 
             {!loading && (
               <>
@@ -75,14 +72,9 @@ export default function Header() {
                     </button>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-3">
-                    <Link href="/signin" className="text-gray-600 hover:text-gray-900 font-medium transition-colors">
-                      Sign In
-                    </Link>
-                    <Link href="/signup" className="btn-primary text-sm py-2.5 px-5">
-                      Get Started
-                    </Link>
-                  </div>
+                  <Link href="/signin" className="btn-primary text-sm py-2.5 px-5">
+                    Sign In
+                  </Link>
                 )}
               </>
             )}
@@ -114,13 +106,6 @@ export default function Header() {
             >
               Browse Tournaments
             </Link>
-            <Link
-              href="/tournaments?region=South+Florida"
-              className="text-gray-700 hover:text-gray-900 font-medium py-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              By Region
-            </Link>
 
             {!loading && (
               <>
@@ -141,22 +126,13 @@ export default function Header() {
                     </button>
                   </>
                 ) : (
-                  <>
-                    <Link
-                      href="/signin"
-                      className="text-gray-700 hover:text-gray-900 font-medium py-2"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      Sign In
-                    </Link>
-                    <Link
-                      href="/signup"
-                      className="btn-primary text-center mt-2"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      Get Started
-                    </Link>
-                  </>
+                  <Link
+                    href="/signin"
+                    className="btn-primary text-center mt-2"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    Sign In
+                  </Link>
                 )}
               </>
             )}
