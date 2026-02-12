@@ -65,7 +65,7 @@ export default function OnboardingPage() {
       website: website || null,
       bio: bio || null,
       verified: false,
-    })
+    } as any)
 
     if (error) {
       setError(error.message)

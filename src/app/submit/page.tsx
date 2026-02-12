@@ -109,7 +109,7 @@ export default function SubmitTournamentPage() {
       organizer_id: organizerId,
       status: 'pending',
       featured: false,
-    })
+    } as any)
 
     if (error) {
       setError(error.message)
