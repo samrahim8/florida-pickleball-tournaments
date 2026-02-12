@@ -4,7 +4,9 @@ import { useState, useEffect, use } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Header from '@/components/Header'
+import ImageUpload from '@/components/ImageUpload'
 import { createClient } from '@/lib/supabase'
+import { uploadTournamentImage } from '@/lib/storage'
 import { FLORIDA_REGIONS, SKILL_LEVELS, TOURNAMENT_FORMATS, TOURNAMENT_CATEGORIES } from '@/lib/constants'
 import { FloridaRegion, SkillLevel, Tournament } from '@/types/database'
 
@@ -33,6 +35,8 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
   const [maxParticipants, setMaxParticipants] = useState('')
   const [registrationUrl, setRegistrationUrl] = useState('')
   const [prizePool, setPrizePool] = useState('')
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [existingImageUrl, setExistingImageUrl] = useState<string | null>(null)
 
   useEffect(() => {
     const loadTournament = async () => {
@@ -85,6 +89,7 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
       setMaxParticipants(t.max_participants?.toString() || '')
       setRegistrationUrl(t.registration_url || '')
       setPrizePool(t.prize_pool || '')
+      setExistingImageUrl(t.image_url || null)
       setLoading(false)
     }
 
@@ -103,6 +108,18 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
     e.preventDefault()
     setSaving(true)
     setError(null)
+
+    // Upload new image if provided
+    let imageUrl = existingImageUrl
+    if (imageFile) {
+      const uploadedUrl = await uploadTournamentImage(imageFile, id)
+      if (!uploadedUrl) {
+        setError('Failed to upload image. Please try again.')
+        setSaving(false)
+        return
+      }
+      imageUrl = uploadedUrl
+    }
 
     const supabase = createClient() as any
     const { error } = await supabase
@@ -123,6 +140,7 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
         max_participants: maxParticipants ? parseInt(maxParticipants) : null,
         registration_url: registrationUrl || null,
         prize_pool: prizePool || null,
+        image_url: imageUrl,
       })
       .eq('id', id)
 
@@ -211,6 +229,19 @@ export default function EditTournamentPage({ params }: { params: Promise<{ id: s
                   rows={4}
                   className="w-full bg-white border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 resize-none"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Tournament Flyer
+                </label>
+                <ImageUpload
+                  value={existingImageUrl}
+                  onChange={(file) => setImageFile(file)}
+                  onRemove={() => setExistingImageUrl(null)}
+                />
+                <p className="text-xs text-gray-400 mt-2">
+                  Upload a square image for your tournament flyer
+                </p>
               </div>
             </div>
           </div>

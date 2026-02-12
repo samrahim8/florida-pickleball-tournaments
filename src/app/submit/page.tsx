@@ -4,7 +4,9 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Header from '@/components/Header'
+import ImageUpload from '@/components/ImageUpload'
 import { createClient } from '@/lib/supabase'
+import { uploadTournamentImage } from '@/lib/storage'
 import { FLORIDA_REGIONS, SKILL_LEVELS, TOURNAMENT_FORMATS, TOURNAMENT_CATEGORIES } from '@/lib/constants'
 import { FloridaRegion, SkillLevel } from '@/types/database'
 
@@ -32,6 +34,7 @@ export default function SubmitTournamentPage() {
   const [maxParticipants, setMaxParticipants] = useState('')
   const [registrationUrl, setRegistrationUrl] = useState('')
   const [prizePool, setPrizePool] = useState('')
+  const [imageFile, setImageFile] = useState<File | null>(null)
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -87,9 +90,22 @@ export default function SubmitTournamentPage() {
     setError(null)
 
     const slug = generateSlug(name) + '-' + Date.now().toString(36)
+    const tournamentId = crypto.randomUUID()
+
+    // Upload image if provided
+    let imageUrl: string | null = null
+    if (imageFile) {
+      imageUrl = await uploadTournamentImage(imageFile, tournamentId)
+      if (!imageUrl) {
+        setError('Failed to upload image. Please try again.')
+        setSaving(false)
+        return
+      }
+    }
 
     const supabase = createClient()
     const { error } = await supabase.from('tournaments').insert({
+      id: tournamentId,
       name,
       slug,
       description: description || null,
@@ -106,6 +122,7 @@ export default function SubmitTournamentPage() {
       max_participants: maxParticipants ? parseInt(maxParticipants) : null,
       registration_url: registrationUrl || null,
       prize_pool: prizePool || null,
+      image_url: imageUrl,
       organizer_id: organizerId,
       status: 'pending',
       featured: false,
@@ -170,6 +187,7 @@ export default function SubmitTournamentPage() {
     setMaxParticipants('')
     setRegistrationUrl('')
     setPrizePool('')
+    setImageFile(null)
   }
 
   return (
@@ -220,6 +238,19 @@ export default function SubmitTournamentPage() {
                   className="w-full bg-white border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 resize-none"
                   placeholder="Tell players what makes this tournament special..."
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Tournament Flyer
+                </label>
+                <ImageUpload
+                  value={null}
+                  onChange={(file) => setImageFile(file)}
+                />
+                <p className="text-xs text-gray-400 mt-2">
+                  Upload a square image for your tournament flyer (shown on detail page)
+                </p>
               </div>
             </div>
           </div>
