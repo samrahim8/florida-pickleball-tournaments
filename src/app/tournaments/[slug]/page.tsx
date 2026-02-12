@@ -6,6 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import VenueMap from '@/components/VenueMap'
 import { createClient } from '@/lib/supabase'
 import { Tournament } from '@/types/database'
 
@@ -199,6 +200,17 @@ export default function TournamentDetailPage() {
                     <p className="text-sm text-[#6B6560]">Florida</p>
                   </div>
                 </div>
+
+                {/* Embedded Map */}
+                {tournament.lat && tournament.lng && (
+                  <div className="mt-4">
+                    <VenueMap
+                      lat={tournament.lat}
+                      lng={tournament.lng}
+                      venueName={tournament.venue_name || undefined}
+                    />
+                  </div>
+                )}
 
                 <a
                   href={getGoogleMapsUrl()}
