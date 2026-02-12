@@ -16,10 +16,6 @@ export default function AdminDashboard() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('pending')
   const [updating, setUpdating] = useState<string | null>(null)
 
-  useEffect(() => {
-    checkAdminAndLoad()
-  }, [])
-
   const checkAdminAndLoad = async () => {
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -60,11 +56,19 @@ export default function AdminDashboard() {
     setTournaments((data as Tournament[]) || [])
   }
 
+  // Initial load - check admin and load tournaments
+  useEffect(() => {
+    checkAdminAndLoad()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // Reload when filter changes
   useEffect(() => {
     if (!loading) {
       loadTournaments()
     }
-  }, [statusFilter, loading])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [statusFilter])
 
   const updateStatus = async (id: string, status: TournamentStatus) => {
     setUpdating(id)
