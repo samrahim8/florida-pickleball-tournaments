@@ -230,12 +230,11 @@ export default function TournamentDetailPage() {
             {tournament.image_url && (
               <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] overflow-hidden">
                 <h2 className="font-serif text-lg text-[#2C2C2C] p-6 pb-4">Tournament Flyer</h2>
-                <div className="relative aspect-[4/3]">
-                  <Image
+                <div className="px-6 pb-6">
+                  <img
                     src={tournament.image_url}
                     alt={tournament.name}
-                    fill
-                    className="object-contain bg-[#F5F0E8]"
+                    className="w-full h-auto rounded-lg"
                   />
                 </div>
               </div>
