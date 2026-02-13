@@ -123,7 +123,8 @@ export default function TournamentDetailPage() {
                 href={tournament.registration_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden sm:inline-flex px-4 py-2 text-sm font-medium bg-[#C4704A] text-white rounded-lg hover:bg-[#A85D3B] transition-colors"
+                className="hidden sm:inline-flex px-4 py-2 text-sm font-medium bg-[#C4704A] rounded-lg hover:bg-[#A85D3B] transition-colors"
+                style={{ color: 'white' }}
               >
                 Register Now
               </a>
@@ -138,34 +139,37 @@ export default function TournamentDetailPage() {
         <div className="grid md:grid-cols-3 gap-6 items-stretch">
           {/* Event Details Card - Most important info */}
           <div className="md:col-span-2">
-            <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6 h-full flex flex-col">
+            <div className="bg-white rounded-xl border border-[#E8E2D9] shadow-lg shadow-[#2C2C2C]/5 p-7 h-full flex flex-col relative overflow-hidden">
+              {/* Subtle accent line at top */}
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#C4704A] via-[#D4845A] to-[#C4704A]" />
+
               {/* Header */}
-              <div className="flex items-start justify-between gap-4 mb-5">
+              <div className="flex items-start justify-between gap-4 mb-6">
                 <h1 className="font-serif text-2xl text-[#2C2C2C] leading-tight">{tournament.name}</h1>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   {tournament.featured && (
-                    <span className="px-2.5 py-1 text-[10px] font-semibold rounded bg-[#C4704A] text-white uppercase tracking-wide">Featured</span>
+                    <span className="px-2.5 py-1 text-[10px] font-bold rounded-full bg-gradient-to-r from-[#C4704A] to-[#D4845A] text-white uppercase tracking-wider shadow-sm">Featured</span>
                   )}
                   {getStatusBadge()}
                 </div>
               </div>
 
-              {/* Date - Hero treatment */}
-              <div className="bg-[#F5F0E8] rounded-lg p-4 mb-5">
-                <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">When</p>
-                <p className="text-[#2C2C2C] font-semibold text-lg">{formatDateRange()}</p>
+              {/* Date - Premium treatment */}
+              <div className="bg-gradient-to-br from-[#2D4A3E] to-[#1e3329] rounded-lg p-5 mb-6 text-white">
+                <p className="text-xs uppercase tracking-wider text-white/70 mb-1">Event Date</p>
+                <p className="font-semibold text-lg">{formatDateRange()}</p>
               </div>
 
               {/* Details Grid */}
-              <div className="grid grid-cols-2 gap-x-6 gap-y-4 flex-grow">
+              <div className="grid grid-cols-2 gap-x-8 gap-y-5 flex-grow">
                 {/* Entry Fee */}
                 {(tournament.entry_fee_min !== null || tournament.entry_fee_max !== null) && (
                   <div>
-                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Entry Fee</p>
-                    <p className="text-[#2C2C2C] font-semibold">
+                    <p className="text-[11px] uppercase tracking-wider text-[#9A948D] mb-1 font-medium">Entry Fee</p>
+                    <p className="text-[#2C2C2C] font-semibold text-lg">
                       ${tournament.entry_fee_min}
                       {tournament.entry_fee_max && tournament.entry_fee_max !== tournament.entry_fee_min && (
-                        <> – ${tournament.entry_fee_max}</>
+                        <span className="text-base font-normal text-[#6B6560]"> – ${tournament.entry_fee_max}</span>
                       )}
                     </p>
                   </div>
@@ -173,15 +177,15 @@ export default function TournamentDetailPage() {
 
                 {/* Skill Level */}
                 <div>
-                  <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Skill Level</p>
-                  <p className="text-[#2C2C2C] font-semibold">{tournament.level}</p>
+                  <p className="text-[11px] uppercase tracking-wider text-[#9A948D] mb-1 font-medium">Skill Level</p>
+                  <p className="text-[#2C2C2C] font-semibold text-lg">{tournament.level}</p>
                 </div>
 
                 {/* Registration Deadline */}
                 {tournament.registration_deadline && (
                   <div>
-                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Deadline</p>
-                    <p className="text-[#C4704A] font-semibold">
+                    <p className="text-[11px] uppercase tracking-wider text-[#9A948D] mb-1 font-medium">Reg. Deadline</p>
+                    <p className="text-[#C4704A] font-bold text-lg">
                       {new Date(tournament.registration_deadline).toLocaleDateString('en-US', {
                         month: 'short',
                         day: 'numeric',
@@ -193,45 +197,46 @@ export default function TournamentDetailPage() {
                 {/* Format */}
                 {tournament.format && (
                   <div>
-                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Format</p>
-                    <p className="text-[#2C2C2C] font-medium">{tournament.format}</p>
+                    <p className="text-[11px] uppercase tracking-wider text-[#9A948D] mb-1 font-medium">Format</p>
+                    <p className="text-[#2C2C2C] font-semibold">{tournament.format}</p>
                   </div>
                 )}
 
                 {/* Category */}
                 {tournament.categories && tournament.categories.length > 0 && (
                   <div>
-                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Category</p>
-                    <p className="text-[#2C2C2C] font-medium">{tournament.categories.join(', ')}</p>
+                    <p className="text-[11px] uppercase tracking-wider text-[#9A948D] mb-1 font-medium">Category</p>
+                    <p className="text-[#2C2C2C] font-semibold">{tournament.categories.join(', ')}</p>
                   </div>
                 )}
 
                 {/* Max Participants */}
                 {tournament.max_participants && (
                   <div>
-                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Max Players</p>
-                    <p className="text-[#2C2C2C] font-medium">{tournament.max_participants}</p>
+                    <p className="text-[11px] uppercase tracking-wider text-[#9A948D] mb-1 font-medium">Max Players</p>
+                    <p className="text-[#2C2C2C] font-semibold">{tournament.max_participants}</p>
                   </div>
                 )}
 
                 {/* Prize Pool */}
                 {tournament.prize_pool && (
                   <div>
-                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Prize Pool</p>
-                    <p className="text-[#2C2C2C] font-medium">{tournament.prize_pool}</p>
+                    <p className="text-[11px] uppercase tracking-wider text-[#9A948D] mb-1 font-medium">Prize Pool</p>
+                    <p className="text-[#2D4A3E] font-bold text-lg">{tournament.prize_pool}</p>
                   </div>
                 )}
               </div>
 
-              {/* Register Button - Always at bottom */}
+              {/* Register Button - Premium styling */}
               {tournament.registration_url && (
                 <a
                   href={tournament.registration_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full text-center block mt-6 px-6 py-3 text-sm font-semibold bg-[#C4704A] text-white rounded-lg hover:bg-[#A85D3B] transition-colors"
+                  className="w-full text-center block mt-6 px-6 py-4 text-sm font-bold bg-gradient-to-r from-[#C4704A] to-[#B8633F] rounded-lg hover:from-[#B8633F] hover:to-[#A85D3B] transition-all shadow-md hover:shadow-lg"
+                  style={{ color: 'white' }}
                 >
-                  Register Now
+                  Register Now →
                 </a>
               )}
             </div>
