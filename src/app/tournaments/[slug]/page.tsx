@@ -150,9 +150,9 @@ export default function TournamentDetailPage() {
           {/* Event Details Card - Most important info */}
           <div className="md:col-span-2">
             <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6 h-full">
-              <h2 className="font-serif text-lg text-[#2C2C2C] mb-5">Event Details</h2>
+              <h1 className="font-serif text-2xl text-[#2C2C2C] mb-6">{tournament.name}</h1>
 
-              <div className="grid sm:grid-cols-2 gap-x-8 gap-y-5">
+              <div className="grid sm:grid-cols-2 gap-x-8 gap-y-4">
                 {/* DATES - Most important! */}
                 <div className="sm:col-span-2 pb-4 border-b border-[#E8E2D9]">
                   <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">When</p>
