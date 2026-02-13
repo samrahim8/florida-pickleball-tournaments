@@ -38,17 +38,27 @@ export default function TournamentCard({ tournament }: TournamentCardProps) {
     return <span className="badge badge-gray">Ended</span>
   }
 
+  const cardClasses = tournament.featured
+    ? 'group block relative bg-gradient-to-br from-[#FFFDF9] via-[#FFFDF9] to-[#FFF8F0] border-2 border-[#C4704A]/30 rounded-xl p-6 shadow-lg shadow-[#C4704A]/10 hover:shadow-xl hover:shadow-[#C4704A]/15 hover:border-[#C4704A]/50 transition-all duration-300'
+    : 'card group p-6'
+
   return (
-    <Link href={`/tournaments/${tournament.slug}`} className="card group p-6">
+    <Link href={`/tournaments/${tournament.slug}`} className={cardClasses}>
+      {/* Featured accent */}
+      {tournament.featured && (
+        <div className="absolute top-0 right-0 w-24 h-24 overflow-hidden rounded-tr-xl">
+          <div className="absolute top-3 -right-8 w-32 bg-gradient-to-r from-[#C4704A] to-[#D4845A] text-white text-[10px] font-bold text-center py-1 rotate-45 shadow-sm uppercase tracking-wider">
+            Featured
+          </div>
+        </div>
+      )}
+
       <div className="flex items-start justify-between gap-4 mb-4">
         <div className="flex-grow min-w-0">
           <div className="flex items-center gap-2 mb-2">
-            {tournament.featured && (
-              <span className="badge badge-orange">Featured</span>
-            )}
             {getStatusBadge()}
           </div>
-          <h3 className="font-serif text-lg text-[#2C2C2C] group-hover:text-[#C4704A] transition-colors truncate">
+          <h3 className={`font-serif text-lg transition-colors truncate ${tournament.featured ? 'text-[#2C2C2C] group-hover:text-[#C4704A]' : 'text-[#2C2C2C] group-hover:text-[#C4704A]'}`}>
             {tournament.name}
           </h3>
         </div>

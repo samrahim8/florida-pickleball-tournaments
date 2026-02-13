@@ -7,44 +7,32 @@ import HomeFilters from '@/components/HomeFilters'
 import { createClient } from '@/lib/supabase-server'
 import { Tournament } from '@/types/database'
 
-async function getFeaturedTournaments(): Promise<Tournament[]> {
-  const supabase = await createClient()
-  const { data, error } = await supabase
-    .from('tournaments')
-    .select('*')
-    .eq('featured', true)
-    .gte('date_end', new Date().toISOString().split('T')[0])
-    .order('date_start', { ascending: true })
-    .limit(3)
-
-  if (error) {
-    console.error('Error fetching featured tournaments:', error)
-    return []
-  }
-  return (data || []) as Tournament[]
-}
-
 async function getUpcomingTournaments(): Promise<Tournament[]> {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from('tournaments')
     .select('*')
+    .eq('status', 'approved')
     .gte('date_end', new Date().toISOString().split('T')[0])
     .order('date_start', { ascending: true })
-    .limit(6)
+    .limit(8)
 
   if (error) {
     console.error('Error fetching upcoming tournaments:', error)
     return []
   }
-  return (data || []) as Tournament[]
+
+  // Sort so featured tournaments come first, then by date
+  const tournaments = (data || []) as Tournament[]
+  return tournaments.sort((a, b) => {
+    if (a.featured && !b.featured) return -1
+    if (!a.featured && b.featured) return 1
+    return new Date(a.date_start).getTime() - new Date(b.date_start).getTime()
+  })
 }
 
 export default async function Home() {
-  const [featured, upcoming] = await Promise.all([
-    getFeaturedTournaments(),
-    getUpcomingTournaments(),
-  ])
+  const upcoming = await getUpcomingTournaments()
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -87,27 +75,8 @@ export default async function Home() {
       </section>
 
       <main className="flex-grow">
-        {/* Featured Tournaments */}
-        {featured.length > 0 && (
-          <section className="py-20 bg-[#FFFDF9]">
-            <div className="max-w-6xl mx-auto px-4">
-              <div className="flex items-center gap-4 mb-10">
-                <span className="badge badge-orange">Featured</span>
-                <h2 className="text-2xl text-[#2C2C2C]">
-                  Don&apos;t Miss These
-                </h2>
-              </div>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {featured.map((tournament) => (
-                  <TournamentCard key={tournament.id} tournament={tournament} />
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
         {/* Upcoming Tournaments */}
-        <section className={`py-20 ${featured.length > 0 ? 'bg-[#FAF7F2]' : 'bg-[#FFFDF9]'}`}>
+        <section className="py-20 bg-[#FFFDF9]">
           <div className="max-w-6xl mx-auto px-4">
             <div className="flex items-end justify-between mb-10">
               <div>
