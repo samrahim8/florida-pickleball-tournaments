@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Header from '@/components/Header'
+import FilterDropdown from '@/components/FilterDropdown'
 import { createClient } from '@/lib/supabase'
 import { Tournament } from '@/types/database'
 
@@ -176,22 +177,20 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Filter Tabs */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
-          {(['pending', 'approved', 'rejected', 'all'] as StatusFilter[]).map((status) => (
-            <button
-              key={status}
-              onClick={() => setStatusFilter(status)}
-              className={`px-4 py-2 text-sm font-medium rounded-lg whitespace-nowrap transition-colors ${
-                statusFilter === status
-                  ? 'bg-[#2D4A3E] text-white'
-                  : 'bg-[#FFFDF9] text-[#6B6560] border border-[#E8E2D9] hover:bg-[#F5F0E8]'
-              }`}
-            >
-              {status.charAt(0).toUpperCase() + status.slice(1)}
-              {status !== 'all' && ` (${statusCounts[status]})`}
-            </button>
-          ))}
+        {/* Status Filter */}
+        <div className="flex items-center gap-3 mb-6">
+          <span className="text-sm text-[#9A948D] font-medium">Filter:</span>
+          <FilterDropdown
+            label="Status"
+            options={[
+              { value: 'pending', label: `Pending (${statusCounts.pending})` },
+              { value: 'approved', label: `Approved (${statusCounts.approved})` },
+              { value: 'rejected', label: `Rejected (${statusCounts.rejected})` },
+              { value: null, label: 'All Statuses' },
+            ]}
+            selected={statusFilter === 'all' ? null : statusFilter}
+            onChange={(value) => setStatusFilter((value as StatusFilter) || 'all')}
+          />
         </div>
 
         {/* Tournaments List */}

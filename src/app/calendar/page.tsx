@@ -4,8 +4,10 @@ import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
+import { MultiFilterDropdown } from '@/components/FilterDropdown'
 import { createClient } from '@/lib/supabase'
 import { Tournament, FloridaRegion } from '@/types/database'
+import { FLORIDA_REGIONS } from '@/lib/constants'
 
 type ViewMode = 'month' | 'list'
 
@@ -296,30 +298,19 @@ export default function CalendarPage() {
               </div>
             </div>
 
-            {/* Region Filters */}
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-sm text-[#9A948D] font-medium">Filter:</span>
-              {(Object.keys(REGION_COLORS) as FloridaRegion[]).map(region => {
-                const colors = getRegionColor(region)
-                const isSelected = selectedRegions.includes(region)
-                return (
-                  <button
-                    key={region}
-                    onClick={() => toggleRegionFilter(region)}
-                    className={`px-3 py-1.5 text-xs font-medium rounded-full border transition-all ${
-                      isSelected
-                        ? `${colors.bg} ${colors.text} ${colors.border}`
-                        : 'bg-white text-[#6B6560] border-[#E8E2D9] hover:border-[#C4704A]/30'
-                    }`}
-                  >
-                    {region}
-                  </button>
-                )
-              })}
+            {/* Region Filter Dropdown */}
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="text-sm text-[#9A948D] font-medium">Filters:</span>
+              <MultiFilterDropdown
+                label="Region"
+                options={FLORIDA_REGIONS.map(region => ({ value: region, label: region }))}
+                selected={selectedRegions}
+                onChange={(values) => setSelectedRegions(values as FloridaRegion[])}
+              />
               {selectedRegions.length > 0 && (
                 <button
                   onClick={() => setSelectedRegions([])}
-                  className="px-3 py-1.5 text-xs font-medium text-[#C4704A] hover:text-[#A85D3B] transition-colors"
+                  className="px-3 py-2 text-sm font-medium text-[#C4704A] hover:text-[#A85D3B] transition-colors"
                 >
                   Clear all
                 </button>

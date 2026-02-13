@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import TournamentCard from '@/components/TournamentCard'
-import RegionFilter from '@/components/RegionFilter'
+import FilterDropdown from '@/components/FilterDropdown'
 import { Tournament, FloridaRegion } from '@/types/database'
-import { SKILL_LEVELS } from '@/lib/constants'
+import { SKILL_LEVELS, FLORIDA_REGIONS } from '@/lib/constants'
 import { createClient } from '@/lib/supabase'
 
 export default function TournamentsList() {
@@ -25,6 +26,7 @@ export default function TournamentsList() {
       let query = supabase
         .from('tournaments')
         .select('*')
+        .eq('status', 'approved')
         .gte('date_end', new Date().toISOString().split('T')[0])
         .order('date_start', { ascending: true })
 
@@ -50,37 +52,61 @@ export default function TournamentsList() {
     fetchTournaments()
   }, [selectedRegion, selectedLevel])
 
+  const regionOptions = [
+    { value: null, label: 'All Regions' },
+    ...FLORIDA_REGIONS.map(region => ({ value: region, label: region }))
+  ]
+
+  const levelOptions = [
+    { value: null, label: 'All Levels' },
+    ...SKILL_LEVELS.filter(l => l !== 'All Levels').map(level => ({ value: level, label: level }))
+  ]
+
+  const hasActiveFilters = selectedRegion !== null || selectedLevel !== null
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      {/* Filters */}
-      <div className="mb-8 space-y-4">
-        <RegionFilter selected={selectedRegion} onChange={setSelectedRegion} />
+      {/* Filters Row */}
+      <div className="flex flex-wrap items-center gap-3 mb-6">
+        <span className="text-sm text-[#9A948D] font-medium">Filters:</span>
 
-        <div className="flex flex-wrap gap-2">
+        <FilterDropdown
+          label="Region"
+          options={regionOptions}
+          selected={selectedRegion}
+          onChange={(value) => setSelectedRegion(value as FloridaRegion | null)}
+        />
+
+        <FilterDropdown
+          label="Skill Level"
+          options={levelOptions}
+          selected={selectedLevel}
+          onChange={setSelectedLevel}
+        />
+
+        {hasActiveFilters && (
           <button
-            onClick={() => setSelectedLevel(null)}
-            className={`px-3 py-1.5 text-sm font-medium rounded transition-colors ${
-              selectedLevel === null
-                ? 'bg-[#C4704A] text-white'
-                : 'bg-[#FFFDF9] text-[#2C2C2C] hover:bg-[#C4704A]/10'
-            }`}
+            onClick={() => {
+              setSelectedRegion(null)
+              setSelectedLevel(null)
+            }}
+            className="px-3 py-2 text-sm font-medium text-[#C4704A] hover:text-[#A85D3B] transition-colors"
           >
-            All Levels
+            Clear all
           </button>
-          {SKILL_LEVELS.filter(l => l !== 'All Levels').map((level) => (
-            <button
-              key={level}
-              onClick={() => setSelectedLevel(level)}
-              className={`px-3 py-1.5 text-sm font-medium rounded transition-colors ${
-                selectedLevel === level
-                  ? 'bg-[#C4704A] text-white'
-                  : 'bg-[#FFFDF9] text-[#2C2C2C] hover:bg-[#C4704A]/10'
-              }`}
-            >
-              {level}
-            </button>
-          ))}
-        </div>
+        )}
+
+        <div className="flex-grow" />
+
+        <Link
+          href="/calendar"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-[#6B6560] hover:text-[#2C2C2C] transition-colors"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          Calendar View
+        </Link>
       </div>
 
       {/* Results count */}
