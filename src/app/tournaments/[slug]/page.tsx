@@ -138,29 +138,31 @@ export default function TournamentDetailPage() {
         <div className="grid md:grid-cols-3 gap-6 items-stretch">
           {/* Event Details Card - Most important info */}
           <div className="md:col-span-2">
-            <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6 h-full">
-              <div className="flex items-start justify-between gap-3 mb-4">
-                <h1 className="font-serif text-2xl text-[#2C2C2C]">{tournament.name}</h1>
+            <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6 h-full flex flex-col">
+              {/* Header */}
+              <div className="flex items-start justify-between gap-4 mb-5">
+                <h1 className="font-serif text-2xl text-[#2C2C2C] leading-tight">{tournament.name}</h1>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   {tournament.featured && (
-                    <span className="px-2 py-0.5 text-[10px] font-semibold rounded bg-[#C4704A] text-white uppercase tracking-wide">Featured</span>
+                    <span className="px-2.5 py-1 text-[10px] font-semibold rounded bg-[#C4704A] text-white uppercase tracking-wide">Featured</span>
                   )}
                   {getStatusBadge()}
                 </div>
               </div>
 
-              <div className="grid sm:grid-cols-2 gap-x-8 gap-y-4">
-                {/* DATES - Most important! */}
-                <div className="sm:col-span-2 pb-4 border-b border-[#E8E2D9]">
-                  <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">When</p>
-                  <p className="text-[#2C2C2C] font-semibold text-xl">{formatDateRange()}</p>
-                </div>
+              {/* Date - Hero treatment */}
+              <div className="bg-[#F5F0E8] rounded-lg p-4 mb-5">
+                <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">When</p>
+                <p className="text-[#2C2C2C] font-semibold text-lg">{formatDateRange()}</p>
+              </div>
 
+              {/* Details Grid */}
+              <div className="grid grid-cols-2 gap-x-6 gap-y-4 flex-grow">
                 {/* Entry Fee */}
                 {(tournament.entry_fee_min !== null || tournament.entry_fee_max !== null) && (
                   <div>
                     <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Entry Fee</p>
-                    <p className="text-[#2C2C2C] font-medium text-lg">
+                    <p className="text-[#2C2C2C] font-semibold">
                       ${tournament.entry_fee_min}
                       {tournament.entry_fee_max && tournament.entry_fee_max !== tournament.entry_fee_min && (
                         <> – ${tournament.entry_fee_max}</>
@@ -172,18 +174,17 @@ export default function TournamentDetailPage() {
                 {/* Skill Level */}
                 <div>
                   <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Skill Level</p>
-                  <p className="text-[#2C2C2C] font-medium text-lg">{tournament.level}</p>
+                  <p className="text-[#2C2C2C] font-semibold">{tournament.level}</p>
                 </div>
 
-                {/* Registration Deadline - with urgency styling */}
+                {/* Registration Deadline */}
                 {tournament.registration_deadline && (
                   <div>
-                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Registration Deadline</p>
-                    <p className="text-[#C4704A] font-semibold text-lg">
+                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Deadline</p>
+                    <p className="text-[#C4704A] font-semibold">
                       {new Date(tournament.registration_deadline).toLocaleDateString('en-US', {
-                        month: 'long',
+                        month: 'short',
                         day: 'numeric',
-                        year: 'numeric',
                       })}
                     </p>
                   </div>
@@ -197,27 +198,18 @@ export default function TournamentDetailPage() {
                   </div>
                 )}
 
-                {/* Category - next to Format */}
+                {/* Category */}
                 {tournament.categories && tournament.categories.length > 0 && (
                   <div>
                     <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Category</p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {tournament.categories.map((cat) => (
-                        <span
-                          key={cat}
-                          className="px-2.5 py-0.5 text-xs font-medium rounded-full bg-[#F5F0E8] text-[#6B6560]"
-                        >
-                          {cat}
-                        </span>
-                      ))}
-                    </div>
+                    <p className="text-[#2C2C2C] font-medium">{tournament.categories.join(', ')}</p>
                   </div>
                 )}
 
                 {/* Max Participants */}
                 {tournament.max_participants && (
                   <div>
-                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Max Participants</p>
+                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Max Players</p>
                     <p className="text-[#2C2C2C] font-medium">{tournament.max_participants}</p>
                   </div>
                 )}
@@ -231,13 +223,13 @@ export default function TournamentDetailPage() {
                 )}
               </div>
 
-              {/* Mobile Register Button */}
+              {/* Register Button - Always at bottom */}
               {tournament.registration_url && (
                 <a
                   href={tournament.registration_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-primary w-full text-center block mt-6 md:hidden"
+                  className="w-full text-center block mt-6 px-6 py-3 text-sm font-semibold bg-[#C4704A] text-white rounded-lg hover:bg-[#A85D3B] transition-colors"
                 >
                   Register Now
                 </a>
