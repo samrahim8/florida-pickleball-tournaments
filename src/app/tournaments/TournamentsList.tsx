@@ -9,14 +9,31 @@ import { Tournament, FloridaRegion } from '@/types/database'
 import { SKILL_LEVELS, FLORIDA_REGIONS } from '@/lib/constants'
 import { createClient } from '@/lib/supabase'
 
+const MONTHS = [
+  { value: '1', label: 'January' },
+  { value: '2', label: 'February' },
+  { value: '3', label: 'March' },
+  { value: '4', label: 'April' },
+  { value: '5', label: 'May' },
+  { value: '6', label: 'June' },
+  { value: '7', label: 'July' },
+  { value: '8', label: 'August' },
+  { value: '9', label: 'September' },
+  { value: '10', label: 'October' },
+  { value: '11', label: 'November' },
+  { value: '12', label: 'December' },
+]
+
 export default function TournamentsList() {
   const searchParams = useSearchParams()
   const initialRegion = searchParams.get('region') as FloridaRegion | null
+  const initialMonth = searchParams.get('month')
 
   const [tournaments, setTournaments] = useState<Tournament[]>([])
   const [loading, setLoading] = useState(true)
   const [selectedRegion, setSelectedRegion] = useState<FloridaRegion | null>(initialRegion)
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null)
+  const [selectedMonth, setSelectedMonth] = useState<string | null>(initialMonth)
 
   useEffect(() => {
     async function fetchTournaments() {
@@ -44,13 +61,28 @@ export default function TournamentsList() {
         console.error('Error fetching tournaments:', error)
         setTournaments([])
       } else {
-        setTournaments(data || [])
+        let filtered = data || []
+
+        // Filter by month if selected
+        if (selectedMonth) {
+          const monthNum = parseInt(selectedMonth)
+          const currentYear = new Date().getFullYear()
+          filtered = filtered.filter(t => {
+            const startDate = new Date(t.date_start)
+            const startMonth = startDate.getMonth() + 1
+            const startYear = startDate.getFullYear()
+            // Include tournaments from current year or next year for the selected month
+            return startMonth === monthNum && (startYear === currentYear || startYear === currentYear + 1)
+          })
+        }
+
+        setTournaments(filtered)
       }
       setLoading(false)
     }
 
     fetchTournaments()
-  }, [selectedRegion, selectedLevel])
+  }, [selectedRegion, selectedLevel, selectedMonth])
 
   const regionOptions = [
     { value: null, label: 'All Regions' },
@@ -62,7 +94,12 @@ export default function TournamentsList() {
     ...SKILL_LEVELS.filter(l => l !== 'All Levels').map(level => ({ value: level, label: level }))
   ]
 
-  const hasActiveFilters = selectedRegion !== null || selectedLevel !== null
+  const monthOptions = [
+    { value: null, label: 'Any Month' },
+    ...MONTHS.map(month => ({ value: month.value, label: month.label }))
+  ]
+
+  const hasActiveFilters = selectedRegion !== null || selectedLevel !== null || selectedMonth !== null
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -84,11 +121,19 @@ export default function TournamentsList() {
           onChange={setSelectedLevel}
         />
 
+        <FilterDropdown
+          label="Month"
+          options={monthOptions}
+          selected={selectedMonth}
+          onChange={setSelectedMonth}
+        />
+
         {hasActiveFilters && (
           <button
             onClick={() => {
               setSelectedRegion(null)
               setSelectedLevel(null)
+              setSelectedMonth(null)
             }}
             className="px-3 py-2 text-sm font-medium text-[#C4704A] hover:text-[#A85D3B] transition-colors"
           >

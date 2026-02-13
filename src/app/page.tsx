@@ -3,9 +3,9 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import TournamentCard from '@/components/TournamentCard'
 import NewsletterSignup from '@/components/NewsletterSignup'
+import HomeFilters from '@/components/HomeFilters'
 import { createClient } from '@/lib/supabase-server'
 import { Tournament } from '@/types/database'
-import { FLORIDA_REGIONS } from '@/lib/constants'
 
 async function getFeaturedTournaments(): Promise<Tournament[]> {
   const supabase = await createClient()
@@ -79,22 +79,10 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Region Quick Links */}
+      {/* Quick Filters */}
       <section className="py-6 border-y border-[#E8E2D9] bg-[#FFFDF9]">
         <div className="max-w-6xl mx-auto px-4">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="text-sm text-[#9A948D] font-medium uppercase tracking-wide">Regions</span>
-            <span className="text-[#D4CCC0]">|</span>
-            {FLORIDA_REGIONS.map((region) => (
-              <Link
-                key={region}
-                href={`/tournaments?region=${encodeURIComponent(region)}`}
-                className="px-4 py-2 text-sm font-medium text-[#6B6560] hover:text-[#C4704A] transition-colors"
-              >
-                {region}
-              </Link>
-            ))}
-          </div>
+          <HomeFilters />
         </div>
       </section>
 
