@@ -156,59 +156,41 @@ export default function TournamentDetailPage() {
               </div>
             )}
 
-            {/* Venue & Location */}
+            {/* Venue & Location - Simplified */}
             <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6">
-              <h2 className="font-serif text-lg text-[#2C2C2C] mb-4">Venue & Location</h2>
+              <h2 className="font-serif text-lg text-[#2C2C2C] mb-4">Location</h2>
 
-              <div className="space-y-3">
+              <div className="space-y-2 mb-4">
                 {tournament.venue_name && (
-                  <div className="flex items-start gap-3">
-                    <svg className="w-5 h-5 text-[#C4704A] mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                    </svg>
-                    <div>
-                      <p className="font-medium text-[#2C2C2C]">{tournament.venue_name}</p>
-                      {tournament.venue_address && (
-                        <p className="text-sm text-[#6B6560]">{tournament.venue_address}</p>
-                      )}
-                    </div>
-                  </div>
+                  <p className="font-medium text-[#2C2C2C]">{tournament.venue_name}</p>
                 )}
-
-                <div className="flex items-start gap-3">
-                  <svg className="w-5 h-5 text-[#C4704A] mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                  <div>
-                    <p className="text-[#2C2C2C]">{tournament.city}, {tournament.region}</p>
-                    <p className="text-sm text-[#6B6560]">Florida</p>
-                  </div>
-                </div>
-
-                {/* Embedded Map */}
-                {tournament.lat && tournament.lng && (
-                  <div className="mt-4">
-                    <VenueMap
-                      lat={tournament.lat}
-                      lng={tournament.lng}
-                      venueName={tournament.venue_name || undefined}
-                    />
-                  </div>
-                )}
-
-                <a
-                  href={getGoogleMapsUrl()}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-[#F5F0E8] text-[#2C2C2C] rounded-lg hover:bg-[#E8E2D9] transition-colors"
-                >
-                  <svg className="w-5 h-5 text-[#C4704A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                  </svg>
-                  <span className="font-medium">Get Directions</span>
-                </a>
+                <p className="text-[#6B6560]">
+                  {tournament.venue_address || `${tournament.city}, ${tournament.region}`}
+                </p>
               </div>
+
+              {/* Embedded Map */}
+              {tournament.lat && tournament.lng && (
+                <div className="mb-4 rounded-lg overflow-hidden">
+                  <VenueMap
+                    lat={tournament.lat}
+                    lng={tournament.lng}
+                    venueName={tournament.venue_name || undefined}
+                  />
+                </div>
+              )}
+
+              <a
+                href={getGoogleMapsUrl()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-[#F5F0E8] text-[#2C2C2C] rounded-lg hover:bg-[#E8E2D9] transition-colors"
+              >
+                <svg className="w-5 h-5 text-[#C4704A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                </svg>
+                <span className="font-medium">Get Directions</span>
+              </a>
             </div>
 
             {/* Tournament Image */}
@@ -228,23 +210,18 @@ export default function TournamentDetailPage() {
 
           {/* Right Column - Sidebar */}
           <div className="space-y-6">
-            {/* Quick Info Card */}
+            {/* Event Details Card - Most important info */}
             <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6">
-              <h2 className="font-serif text-lg text-[#2C2C2C] mb-4">Quick Info</h2>
+              <h2 className="font-serif text-lg text-[#2C2C2C] mb-4">Event Details</h2>
 
               <div className="space-y-4">
-                <div>
-                  <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Skill Level</p>
-                  <p className="text-[#2C2C2C] font-medium">{tournament.level}</p>
+                {/* DATES - Most important! */}
+                <div className="pb-4 border-b border-[#E8E2D9]">
+                  <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">When</p>
+                  <p className="text-[#2C2C2C] font-semibold text-lg">{formatDateRange()}</p>
                 </div>
 
-                {tournament.format && (
-                  <div>
-                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Format</p>
-                    <p className="text-[#2C2C2C] font-medium">{tournament.format}</p>
-                  </div>
-                )}
-
+                {/* Entry Fee */}
                 {(tournament.entry_fee_min !== null || tournament.entry_fee_max !== null) && (
                   <div>
                     <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Entry Fee</p>
@@ -254,6 +231,34 @@ export default function TournamentDetailPage() {
                         <> – ${tournament.entry_fee_max}</>
                       )}
                     </p>
+                  </div>
+                )}
+
+                {/* Skill Level */}
+                <div>
+                  <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Skill Level</p>
+                  <p className="text-[#2C2C2C] font-medium">{tournament.level}</p>
+                </div>
+
+                {/* Registration Deadline - with urgency styling */}
+                {tournament.registration_deadline && (
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Registration Deadline</p>
+                    <p className="text-[#C4704A] font-medium">
+                      {new Date(tournament.registration_deadline).toLocaleDateString('en-US', {
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}
+                    </p>
+                  </div>
+                )}
+
+                {/* Secondary info */}
+                {tournament.format && (
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Format</p>
+                    <p className="text-[#2C2C2C] font-medium">{tournament.format}</p>
                   </div>
                 )}
 
@@ -268,19 +273,6 @@ export default function TournamentDetailPage() {
                   <div>
                     <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Prize Pool</p>
                     <p className="text-[#2C2C2C] font-medium">{tournament.prize_pool}</p>
-                  </div>
-                )}
-
-                {tournament.registration_deadline && (
-                  <div>
-                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Registration Deadline</p>
-                    <p className="text-[#2C2C2C] font-medium">
-                      {new Date(tournament.registration_deadline).toLocaleDateString('en-US', {
-                        month: 'long',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })}
-                    </p>
                   </div>
                 )}
               </div>
