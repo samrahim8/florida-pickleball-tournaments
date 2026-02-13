@@ -156,7 +156,7 @@ export default function TournamentDetailPage() {
 
               {/* Date - Premium treatment */}
               <div className="bg-gradient-to-br from-[#2D4A3E] to-[#1e3329] rounded-lg p-5 mb-6 text-white">
-                <p className="text-xs uppercase tracking-wider text-white/70 mb-1">Event Date</p>
+                <p className="text-xs uppercase tracking-wider text-white/70 mb-1">Tournament Date</p>
                 <p className="font-semibold text-lg">{formatDateRange()}</p>
               </div>
 
