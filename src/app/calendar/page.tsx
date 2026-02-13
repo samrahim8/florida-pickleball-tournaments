@@ -386,7 +386,7 @@ export default function CalendarPage() {
                                 <button
                                   key={dayIndex}
                                   onClick={() => setSelectedDate(date)}
-                                  className={`min-h-[100px] sm:min-h-[120px] p-2 border-r border-[#E8E2D9] last:border-r-0 text-left transition-colors ${
+                                  className={`min-h-[110px] sm:min-h-[130px] p-2 border-r border-[#E8E2D9] last:border-r-0 text-left transition-colors flex flex-col ${
                                     isSelected
                                       ? 'bg-[#2D4A3E]/5'
                                       : isCurrentMonth
@@ -395,9 +395,9 @@ export default function CalendarPage() {
                                   }`}
                                 >
                                   <span
-                                    className={`inline-flex items-center justify-center w-7 h-7 text-sm font-medium rounded-full ${
+                                    className={`inline-flex items-center justify-center w-8 h-8 text-sm font-semibold rounded-full mb-1 ${
                                       isCurrentDay
-                                        ? 'bg-[#C4704A] text-white'
+                                        ? 'bg-[#C4704A] text-white shadow-sm'
                                         : isSelected
                                         ? 'bg-[#2D4A3E] text-white'
                                         : isCurrentMonth
@@ -412,44 +412,43 @@ export default function CalendarPage() {
                             })}
                           </div>
 
-                          {/* Tournament bars overlay */}
+                          {/* Tournament bars overlay - positioned below dates */}
                           <div
-                            className="absolute left-0 right-0 pointer-events-none"
-                            style={{ top: '36px' }}
+                            className="absolute left-0 right-0 pointer-events-none px-1"
+                            style={{ top: '44px' }}
                           >
-                            {bars.slice(0, 4).map(({ tournament, startCol, span, row }) => {
+                            {bars.slice(0, 3).map(({ tournament, startCol, span, row }) => {
                               const colors = getRegionColor(tournament.region)
-                              const isMultiDay = tournament.date_start !== tournament.date_end
 
                               return (
                                 <Link
                                   key={`${tournament.id}-${weekIndex}`}
                                   href={`/tournaments/${tournament.slug}`}
-                                  className={`absolute h-6 rounded-md px-2 flex items-center pointer-events-auto transition-all hover:brightness-95 hover:shadow-sm ${
+                                  className={`absolute h-[22px] rounded-md px-2 flex items-center pointer-events-auto transition-all hover:shadow-md hover:scale-[1.02] ${
                                     tournament.featured
-                                      ? 'bg-[#C4704A] text-white'
-                                      : `${colors.bg} ${colors.text}`
+                                      ? 'bg-gradient-to-r from-[#C4704A] to-[#D4845A] text-white shadow-sm'
+                                      : `${colors.bg} ${colors.text} border ${colors.border}`
                                   }`}
                                   style={{
-                                    left: `calc(${(startCol / 7) * 100}% + 4px)`,
-                                    width: `calc(${(span / 7) * 100}% - 8px)`,
-                                    top: `${row * 28}px`,
+                                    left: `calc(${(startCol / 7) * 100}% + 2px)`,
+                                    width: `calc(${(span / 7) * 100}% - 4px)`,
+                                    top: `${row * 26}px`,
                                   }}
                                   onMouseEnter={(e) => handleTournamentHover(tournament, e)}
                                   onMouseLeave={() => setHoveredTournament(null)}
                                 >
-                                  <span className="text-xs font-medium truncate">
+                                  <span className="text-[11px] font-semibold truncate">
                                     {tournament.name}
                                   </span>
                                 </Link>
                               )
                             })}
-                            {bars.length > 4 && (
+                            {bars.length > 3 && (
                               <div
-                                className="absolute text-xs text-[#9A948D] px-2"
-                                style={{ top: `${4 * 28}px`, left: '4px' }}
+                                className="absolute text-[11px] text-[#C4704A] font-medium px-2 cursor-pointer hover:underline"
+                                style={{ top: `${3 * 26}px`, left: '4px' }}
                               >
-                                +{bars.length - 4} more
+                                +{bars.length - 3} more
                               </div>
                             )}
                           </div>
