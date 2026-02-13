@@ -87,6 +87,9 @@ export default function Header() {
             <Link href="/tournaments" className="text-[#6B6560] hover:text-[#2C2C2C] font-medium transition-colors text-sm tracking-wide">
               Browse
             </Link>
+            <Link href="/calendar" className="text-[#6B6560] hover:text-[#2C2C2C] font-medium transition-colors text-sm tracking-wide">
+              Calendar
+            </Link>
 
             {!loading && (
               <>
@@ -176,6 +179,13 @@ export default function Header() {
               onClick={() => setMobileMenuOpen(false)}
             >
               Browse Tournaments
+            </Link>
+            <Link
+              href="/calendar"
+              className="text-[#6B6560] hover:text-[#2C2C2C] font-medium py-3 transition-colors"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Calendar
             </Link>
 
             {!loading && (
