@@ -108,33 +108,22 @@ export default function TournamentDetailPage() {
     <div className="min-h-screen bg-[#FAF7F2]">
       <Header />
 
-      {/* Compact Hero */}
-      <div className="bg-[#2D4A3E]">
-        <div className="max-w-4xl mx-auto px-4 py-5">
-          <div className="flex items-center justify-between gap-4">
-            <div className="min-w-0">
-              <Link href="/tournaments" className="inline-flex items-center gap-1.5 text-xs mb-2 transition-colors hover:opacity-80" style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
-                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-                Back
-              </Link>
-              <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="font-serif text-xl sm:text-2xl text-white truncate">
-                  {tournament.name}
-                </h1>
-                {tournament.featured && (
-                  <span className="px-2 py-0.5 text-[10px] font-semibold rounded bg-[#C4704A] text-white uppercase tracking-wide">Featured</span>
-                )}
-                {getStatusBadge()}
-              </div>
-            </div>
+      {/* Simple Nav Bar */}
+      <div className="border-b border-[#E8E2D9] bg-[#FFFDF9]">
+        <div className="max-w-4xl mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            <Link href="/tournaments" className="inline-flex items-center gap-1.5 text-sm text-[#6B6560] hover:text-[#2C2C2C] transition-colors">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+              Back
+            </Link>
             {tournament.registration_url && (
               <a
                 href={tournament.registration_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden sm:inline-flex px-4 py-2 text-sm font-medium bg-[#C4704A] text-white rounded-lg hover:bg-[#A85D3B] transition-colors whitespace-nowrap"
+                className="hidden sm:inline-flex px-4 py-2 text-sm font-medium bg-[#C4704A] text-white rounded-lg hover:bg-[#A85D3B] transition-colors"
               >
                 Register Now
               </a>
@@ -150,7 +139,15 @@ export default function TournamentDetailPage() {
           {/* Event Details Card - Most important info */}
           <div className="md:col-span-2">
             <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6 h-full">
-              <h1 className="font-serif text-2xl text-[#2C2C2C] mb-6">{tournament.name}</h1>
+              <div className="flex items-start justify-between gap-3 mb-4">
+                <h1 className="font-serif text-2xl text-[#2C2C2C]">{tournament.name}</h1>
+                <div className="flex items-center gap-2 flex-shrink-0">
+                  {tournament.featured && (
+                    <span className="px-2 py-0.5 text-[10px] font-semibold rounded bg-[#C4704A] text-white uppercase tracking-wide">Featured</span>
+                  )}
+                  {getStatusBadge()}
+                </div>
+              </div>
 
               <div className="grid sm:grid-cols-2 gap-x-8 gap-y-4">
                 {/* DATES - Most important! */}
