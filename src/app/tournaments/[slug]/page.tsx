@@ -200,6 +200,23 @@ export default function TournamentDetailPage() {
                   </div>
                 )}
 
+                {/* Category - next to Format */}
+                {tournament.categories && tournament.categories.length > 0 && (
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Category</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {tournament.categories.map((cat) => (
+                        <span
+                          key={cat}
+                          className="px-2.5 py-0.5 text-xs font-medium rounded-full bg-[#F5F0E8] text-[#6B6560]"
+                        >
+                          {cat}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 {/* Max Participants */}
                 {tournament.max_participants && (
                   <div>
@@ -213,23 +230,6 @@ export default function TournamentDetailPage() {
                   <div>
                     <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Prize Pool</p>
                     <p className="text-[#2C2C2C] font-medium">{tournament.prize_pool}</p>
-                  </div>
-                )}
-
-                {/* Categories - merged in as tags */}
-                {tournament.categories && tournament.categories.length > 0 && (
-                  <div className="sm:col-span-2 pt-4 border-t border-[#E8E2D9]">
-                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-2">Categories</p>
-                    <div className="flex flex-wrap gap-2">
-                      {tournament.categories.map((cat) => (
-                        <span
-                          key={cat}
-                          className="px-3 py-1 text-xs font-medium rounded-full bg-[#F5F0E8] text-[#6B6560]"
-                        >
-                          {cat}
-                        </span>
-                      ))}
-                    </div>
                   </div>
                 )}
               </div>
