@@ -144,10 +144,109 @@ export default function TournamentDetailPage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-4xl mx-auto px-4 py-10">
-        <div className="grid md:grid-cols-3 gap-8">
-          {/* Left Column - Details */}
-          <div className="md:col-span-2 space-y-8">
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="grid md:grid-cols-3 gap-6">
+          {/* Left Column - Event Details (Main) */}
+          <div className="md:col-span-2 space-y-6">
+            {/* Event Details Card - Most important info */}
+            <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6">
+              <h2 className="font-serif text-lg text-[#2C2C2C] mb-5">Event Details</h2>
+
+              <div className="grid sm:grid-cols-2 gap-x-8 gap-y-5">
+                {/* DATES - Most important! */}
+                <div className="sm:col-span-2 pb-4 border-b border-[#E8E2D9]">
+                  <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">When</p>
+                  <p className="text-[#2C2C2C] font-semibold text-xl">{formatDateRange()}</p>
+                </div>
+
+                {/* Entry Fee */}
+                {(tournament.entry_fee_min !== null || tournament.entry_fee_max !== null) && (
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Entry Fee</p>
+                    <p className="text-[#2C2C2C] font-medium text-lg">
+                      ${tournament.entry_fee_min}
+                      {tournament.entry_fee_max && tournament.entry_fee_max !== tournament.entry_fee_min && (
+                        <> – ${tournament.entry_fee_max}</>
+                      )}
+                    </p>
+                  </div>
+                )}
+
+                {/* Skill Level */}
+                <div>
+                  <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Skill Level</p>
+                  <p className="text-[#2C2C2C] font-medium text-lg">{tournament.level}</p>
+                </div>
+
+                {/* Registration Deadline - with urgency styling */}
+                {tournament.registration_deadline && (
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Registration Deadline</p>
+                    <p className="text-[#C4704A] font-semibold text-lg">
+                      {new Date(tournament.registration_deadline).toLocaleDateString('en-US', {
+                        month: 'long',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })}
+                    </p>
+                  </div>
+                )}
+
+                {/* Format */}
+                {tournament.format && (
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Format</p>
+                    <p className="text-[#2C2C2C] font-medium">{tournament.format}</p>
+                  </div>
+                )}
+
+                {/* Max Participants */}
+                {tournament.max_participants && (
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Max Participants</p>
+                    <p className="text-[#2C2C2C] font-medium">{tournament.max_participants}</p>
+                  </div>
+                )}
+
+                {/* Prize Pool */}
+                {tournament.prize_pool && (
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Prize Pool</p>
+                    <p className="text-[#2C2C2C] font-medium">{tournament.prize_pool}</p>
+                  </div>
+                )}
+
+                {/* Categories - merged in as tags */}
+                {tournament.categories && tournament.categories.length > 0 && (
+                  <div className="sm:col-span-2 pt-4 border-t border-[#E8E2D9]">
+                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-2">Categories</p>
+                    <div className="flex flex-wrap gap-2">
+                      {tournament.categories.map((cat) => (
+                        <span
+                          key={cat}
+                          className="px-3 py-1 text-xs font-medium rounded-full bg-[#F5F0E8] text-[#6B6560]"
+                        >
+                          {cat}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Mobile Register Button */}
+              {tournament.registration_url && (
+                <a
+                  href={tournament.registration_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-primary w-full text-center block mt-6 sm:hidden"
+                >
+                  Register Now
+                </a>
+              )}
+            </div>
+
             {/* Description */}
             {tournament.description && (
               <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6">
@@ -156,15 +255,32 @@ export default function TournamentDetailPage() {
               </div>
             )}
 
-            {/* Venue & Location - Simplified */}
+            {/* Tournament Image */}
+            {tournament.image_url && (
+              <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] overflow-hidden">
+                <h2 className="font-serif text-lg text-[#2C2C2C] p-6 pb-4">Tournament Flyer</h2>
+                <div className="px-6 pb-6">
+                  <img
+                    src={tournament.image_url}
+                    alt={tournament.name}
+                    className="w-full h-auto rounded-lg"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Right Column - Sidebar (Location + Actions) */}
+          <div className="space-y-6">
+            {/* Location Card */}
             <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6">
               <h2 className="font-serif text-lg text-[#2C2C2C] mb-4">Location</h2>
 
-              <div className="space-y-2 mb-4">
+              <div className="space-y-1 mb-4">
                 {tournament.venue_name && (
                   <p className="font-medium text-[#2C2C2C]">{tournament.venue_name}</p>
                 )}
-                <p className="text-[#6B6560]">
+                <p className="text-sm text-[#6B6560]">
                   {tournament.venue_address || `${tournament.city}, ${tournament.region}`}
                 </p>
               </div>
@@ -184,124 +300,22 @@ export default function TournamentDetailPage() {
                 href={getGoogleMapsUrl()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-[#F5F0E8] text-[#2C2C2C] rounded-lg hover:bg-[#E8E2D9] transition-colors"
+                className="inline-flex items-center gap-2 px-4 py-2 bg-[#F5F0E8] text-[#2C2C2C] rounded-lg hover:bg-[#E8E2D9] transition-colors text-sm"
               >
-                <svg className="w-5 h-5 text-[#C4704A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-[#C4704A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                 </svg>
                 <span className="font-medium">Get Directions</span>
               </a>
             </div>
 
-            {/* Tournament Image */}
-            {tournament.image_url && (
-              <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] overflow-hidden">
-                <h2 className="font-serif text-lg text-[#2C2C2C] p-6 pb-4">Tournament Flyer</h2>
-                <div className="px-6 pb-6">
-                  <img
-                    src={tournament.image_url}
-                    alt={tournament.name}
-                    className="w-full h-auto rounded-lg"
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Right Column - Sidebar */}
-          <div className="space-y-6">
-            {/* Event Details Card - Most important info */}
-            <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6">
-              <h2 className="font-serif text-lg text-[#2C2C2C] mb-4">Event Details</h2>
-
-              <div className="space-y-4">
-                {/* DATES - Most important! */}
-                <div className="pb-4 border-b border-[#E8E2D9]">
-                  <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">When</p>
-                  <p className="text-[#2C2C2C] font-semibold text-lg">{formatDateRange()}</p>
-                </div>
-
-                {/* Entry Fee */}
-                {(tournament.entry_fee_min !== null || tournament.entry_fee_max !== null) && (
-                  <div>
-                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Entry Fee</p>
-                    <p className="text-[#2C2C2C] font-medium">
-                      ${tournament.entry_fee_min}
-                      {tournament.entry_fee_max && tournament.entry_fee_max !== tournament.entry_fee_min && (
-                        <> – ${tournament.entry_fee_max}</>
-                      )}
-                    </p>
-                  </div>
-                )}
-
-                {/* Skill Level */}
-                <div>
-                  <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Skill Level</p>
-                  <p className="text-[#2C2C2C] font-medium">{tournament.level}</p>
-                </div>
-
-                {/* Registration Deadline - with urgency styling */}
-                {tournament.registration_deadline && (
-                  <div>
-                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Registration Deadline</p>
-                    <p className="text-[#C4704A] font-medium">
-                      {new Date(tournament.registration_deadline).toLocaleDateString('en-US', {
-                        month: 'long',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })}
-                    </p>
-                  </div>
-                )}
-
-                {/* Secondary info */}
-                {tournament.format && (
-                  <div>
-                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Format</p>
-                    <p className="text-[#2C2C2C] font-medium">{tournament.format}</p>
-                  </div>
-                )}
-
-                {tournament.max_participants && (
-                  <div>
-                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Max Participants</p>
-                    <p className="text-[#2C2C2C] font-medium">{tournament.max_participants}</p>
-                  </div>
-                )}
-
-                {tournament.prize_pool && (
-                  <div>
-                    <p className="text-xs uppercase tracking-wide text-[#9A948D] mb-1">Prize Pool</p>
-                    <p className="text-[#2C2C2C] font-medium">{tournament.prize_pool}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Categories */}
-            {tournament.categories && tournament.categories.length > 0 && (
-              <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6">
-                <h2 className="font-serif text-lg text-[#2C2C2C] mb-4">Categories</h2>
-                <div className="flex flex-wrap gap-2">
-                  {tournament.categories.map((cat) => (
-                    <span
-                      key={cat}
-                      className="px-3 py-1 text-xs font-medium rounded-full bg-[#F5F0E8] text-[#6B6560]"
-                    >
-                      {cat}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Register Button */}
+            {/* Register Button - Desktop */}
             {tournament.registration_url && (
               <a
                 href={tournament.registration_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-primary w-full text-center block"
+                className="btn-primary w-full text-center block hidden sm:block"
               >
                 Register Now
               </a>
