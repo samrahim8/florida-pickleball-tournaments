@@ -99,7 +99,7 @@ export default function DashboardPage() {
   }
 
   const pendingCount = tournaments.filter(t => t.status === 'pending').length
-  const approvedCount = tournaments.filter(t => t.status === 'approved' || t.status === 'active' || t.status === 'upcoming').length
+  const approvedCount = tournaments.filter(t => t.status === 'approved').length
 
   // Empty state - clean and focused
   if (tournaments.length === 0) {

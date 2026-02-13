@@ -191,6 +191,7 @@ export default function AdminEditTournamentPage() {
       setImageFile(null)
       setImageRemoved(false)
       setSuccess(true)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     }
     setSaving(false)
   }

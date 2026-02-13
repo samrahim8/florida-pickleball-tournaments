@@ -13,7 +13,7 @@ type StatusFilter = 'all' | 'pending' | 'approved' | 'rejected'
 export default function AdminDashboard() {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
-  const [tournaments, setTournaments] = useState<Tournament[]>([])
+  const [allTournaments, setAllTournaments] = useState<Tournament[]>([])
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('pending')
   const [updating, setUpdating] = useState<string | null>(null)
 
@@ -44,17 +44,12 @@ export default function AdminDashboard() {
 
   const loadTournaments = async () => {
     const supabase = createClient()
-    let query = supabase
+    const { data } = await supabase
       .from('tournaments')
       .select('*, organizer:organizers(name, email)')
       .order('created_at', { ascending: false })
 
-    if (statusFilter !== 'all') {
-      query = query.eq('status', statusFilter)
-    }
-
-    const { data } = await query
-    setTournaments((data as Tournament[]) || [])
+    setAllTournaments((data as Tournament[]) || [])
   }
 
   // Initial load - check admin and load tournaments
@@ -63,13 +58,10 @@ export default function AdminDashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Reload when filter changes
-  useEffect(() => {
-    if (!loading) {
-      loadTournaments()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [statusFilter])
+  // Filter tournaments for display
+  const tournaments = statusFilter === 'all'
+    ? allTournaments
+    : allTournaments.filter(t => t.status === statusFilter)
 
   const updateStatus = async (id: string, status: 'pending' | 'approved' | 'rejected') => {
     setUpdating(id)
@@ -131,10 +123,10 @@ export default function AdminDashboard() {
   }
 
   const statusCounts = {
-    all: tournaments.length,
-    pending: tournaments.filter(t => t.status === 'pending').length,
-    approved: tournaments.filter(t => t.status === 'approved').length,
-    rejected: tournaments.filter(t => t.status === 'rejected').length,
+    all: allTournaments.length,
+    pending: allTournaments.filter(t => t.status === 'pending').length,
+    approved: allTournaments.filter(t => t.status === 'approved').length,
+    rejected: allTournaments.filter(t => t.status === 'rejected').length,
   }
 
   if (loading) {
@@ -172,7 +164,7 @@ export default function AdminDashboard() {
             <p className="text-sm text-[#6B6560]">Rejected</p>
           </div>
           <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-4">
-            <p className="text-2xl font-semibold text-[#C4704A]">{tournaments.filter(t => t.featured).length}</p>
+            <p className="text-2xl font-semibold text-[#C4704A]">{allTournaments.filter(t => t.featured).length}</p>
             <p className="text-sm text-[#6B6560]">Featured</p>
           </div>
         </div>
