@@ -145,11 +145,11 @@ export default function TournamentDetailPage() {
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="grid md:grid-cols-3 gap-6">
-          {/* Left Column - Event Details (Main) */}
-          <div className="md:col-span-2 space-y-6">
-            {/* Event Details Card - Most important info */}
-            <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6">
+        {/* Top Row - Event Details + Location (same height) */}
+        <div className="grid md:grid-cols-3 gap-6 items-stretch">
+          {/* Event Details Card - Most important info */}
+          <div className="md:col-span-2">
+            <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6 h-full">
               <h2 className="font-serif text-lg text-[#2C2C2C] mb-5">Event Details</h2>
 
               <div className="grid sm:grid-cols-2 gap-x-8 gap-y-5">
@@ -240,13 +240,55 @@ export default function TournamentDetailPage() {
                   href={tournament.registration_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-primary w-full text-center block mt-6 sm:hidden"
+                  className="btn-primary w-full text-center block mt-6 md:hidden"
                 >
                   Register Now
                 </a>
               )}
             </div>
+          </div>
 
+          {/* Location Card - Stretches to match Event Details */}
+          <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6 h-full flex flex-col">
+            <h2 className="font-serif text-lg text-[#2C2C2C] mb-4">Location</h2>
+
+            <div className="space-y-1 mb-4">
+              {tournament.venue_name && (
+                <p className="font-medium text-[#2C2C2C]">{tournament.venue_name}</p>
+              )}
+              <p className="text-sm text-[#6B6560]">
+                {tournament.venue_address || `${tournament.city}, ${tournament.region}`}
+              </p>
+            </div>
+
+            {/* Embedded Map - grows to fill space */}
+            {tournament.lat && tournament.lng && (
+              <div className="flex-grow rounded-lg overflow-hidden mb-4 min-h-[200px]">
+                <VenueMap
+                  lat={tournament.lat}
+                  lng={tournament.lng}
+                  venueName={tournament.venue_name || undefined}
+                />
+              </div>
+            )}
+
+            <a
+              href={getGoogleMapsUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-[#F5F0E8] text-[#2C2C2C] rounded-lg hover:bg-[#E8E2D9] transition-colors text-sm mt-auto"
+            >
+              <svg className="w-4 h-4 text-[#C4704A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+              </svg>
+              <span className="font-medium">Get Directions</span>
+            </a>
+          </div>
+        </div>
+
+        {/* Additional Content Below */}
+        <div className="grid md:grid-cols-3 gap-6 mt-6">
+          <div className="md:col-span-2 space-y-6">
             {/* Description */}
             {tournament.description && (
               <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6">
@@ -270,57 +312,8 @@ export default function TournamentDetailPage() {
             )}
           </div>
 
-          {/* Right Column - Sidebar (Location + Actions) */}
-          <div className="space-y-6">
-            {/* Location Card */}
-            <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6">
-              <h2 className="font-serif text-lg text-[#2C2C2C] mb-4">Location</h2>
-
-              <div className="space-y-1 mb-4">
-                {tournament.venue_name && (
-                  <p className="font-medium text-[#2C2C2C]">{tournament.venue_name}</p>
-                )}
-                <p className="text-sm text-[#6B6560]">
-                  {tournament.venue_address || `${tournament.city}, ${tournament.region}`}
-                </p>
-              </div>
-
-              {/* Embedded Map */}
-              {tournament.lat && tournament.lng && (
-                <div className="mb-4 rounded-lg overflow-hidden">
-                  <VenueMap
-                    lat={tournament.lat}
-                    lng={tournament.lng}
-                    venueName={tournament.venue_name || undefined}
-                  />
-                </div>
-              )}
-
-              <a
-                href={getGoogleMapsUrl()}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-[#F5F0E8] text-[#2C2C2C] rounded-lg hover:bg-[#E8E2D9] transition-colors text-sm"
-              >
-                <svg className="w-4 h-4 text-[#C4704A]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-                </svg>
-                <span className="font-medium">Get Directions</span>
-              </a>
-            </div>
-
-            {/* Register Button - Desktop */}
-            {tournament.registration_url && (
-              <a
-                href={tournament.registration_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn-primary w-full text-center block hidden sm:block"
-              >
-                Register Now
-              </a>
-            )}
-
+          {/* Organizer in sidebar position */}
+          <div>
             {/* Organizer Info */}
             {tournament.organizer && (
               <div className="bg-[#FFFDF9] rounded-lg border border-[#E8E2D9] p-6">
