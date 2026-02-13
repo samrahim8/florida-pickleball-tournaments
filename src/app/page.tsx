@@ -136,13 +136,24 @@ export default async function Home() {
         <section className="py-24 bg-[#2D4A3E]">
           <div className="max-w-6xl mx-auto px-4">
             <div className="max-w-xl mx-auto text-center">
-              <h2 className="text-2xl md:text-3xl text-white mb-4">
-                Stay in the Loop
-              </h2>
-              <p className="text-[#7A8B7A] mb-8">
-                Get notified when new tournaments are added in your region. No spam, ever.
+              <p className="text-[#C4704A] font-medium tracking-wide uppercase text-sm mb-3">
+                Free Newsletter
               </p>
+              <h2 className="text-2xl md:text-3xl text-white mb-4">
+                The Florida Pickleball Insider
+              </h2>
+              <p className="text-[#A8B5A8] mb-3 leading-relaxed">
+                Join 1,000+ players getting the inside scoop every week.
+              </p>
+              <ul className="text-[#8A9B8A] text-sm mb-8 space-y-1">
+                <li>Upcoming tournaments & registration deadlines</li>
+                <li>Community spotlights & player stories</li>
+                <li>Pro tips to level up your game</li>
+              </ul>
               <NewsletterSignup />
+              <p className="text-[#6B7B6B] text-xs mt-4">
+                One email per week. Unsubscribe anytime.
+              </p>
             </div>
           </div>
         </section>
