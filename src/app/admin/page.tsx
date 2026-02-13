@@ -71,7 +71,7 @@ export default function AdminDashboard() {
       .update({ status })
       .eq('id', id)
 
-    setTournaments(prev =>
+    setAllTournaments(prev =>
       prev.map(t => t.id === id ? { ...t, status } : t)
     )
     setUpdating(null)
@@ -85,7 +85,7 @@ export default function AdminDashboard() {
       .update({ featured })
       .eq('id', id)
 
-    setTournaments(prev =>
+    setAllTournaments(prev =>
       prev.map(t => t.id === id ? { ...t, featured } : t)
     )
     setUpdating(null)
@@ -101,7 +101,7 @@ export default function AdminDashboard() {
       .delete()
       .eq('id', id)
 
-    setTournaments(prev => prev.filter(t => t.id !== id))
+    setAllTournaments(prev => prev.filter(t => t.id !== id))
     setUpdating(null)
   }
 
