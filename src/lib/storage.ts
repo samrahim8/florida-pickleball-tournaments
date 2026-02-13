@@ -1,11 +1,27 @@
 import { createClient } from './supabase'
 
-export async function uploadTournamentImage(file: File, tournamentId: string): Promise<string | null> {
+export type UploadResult = {
+  url: string | null
+  error: string | null
+}
+
+export async function uploadTournamentImage(file: File, tournamentId: string): Promise<UploadResult> {
   const supabase = createClient()
 
-  const fileExt = file.name.split('.').pop()
+  const fileExt = file.name.split('.').pop()?.toLowerCase()
   const fileName = `${tournamentId}-${Date.now()}.${fileExt}`
   const filePath = `tournaments/${fileName}`
+
+  // Validate file type
+  const allowedTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp']
+  if (!fileExt || !allowedTypes.includes(fileExt)) {
+    return { url: null, error: 'Invalid file type. Please upload a JPG, PNG, GIF, or WebP image.' }
+  }
+
+  // Validate file size (max 5MB)
+  if (file.size > 5 * 1024 * 1024) {
+    return { url: null, error: 'Image too large. Maximum size is 5MB.' }
+  }
 
   const { error } = await supabase.storage
     .from('tournament-images')
@@ -16,14 +32,21 @@ export async function uploadTournamentImage(file: File, tournamentId: string): P
 
   if (error) {
     console.error('Upload error:', error)
-    return null
+    // Provide helpful error messages
+    if (error.message.includes('Bucket not found')) {
+      return { url: null, error: 'Storage not configured. Please contact support.' }
+    }
+    if (error.message.includes('row-level security') || error.message.includes('policy')) {
+      return { url: null, error: 'Permission denied. Please sign in and try again.' }
+    }
+    return { url: null, error: `Upload failed: ${error.message}` }
   }
 
   const { data: { publicUrl } } = supabase.storage
     .from('tournament-images')
     .getPublicUrl(filePath)
 
-  return publicUrl
+  return { url: publicUrl, error: null }
 }
 
 export async function deleteTournamentImage(imageUrl: string): Promise<boolean> {

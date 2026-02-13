@@ -140,12 +140,13 @@ export default function EditTournamentPage() {
       if (imageUrl) {
         await deleteTournamentImage(imageUrl)
       }
-      newImageUrl = await uploadTournamentImage(imageFile, tournament.id)
-      if (!newImageUrl) {
-        setError('Failed to upload image. Please try again.')
+      const uploadResult = await uploadTournamentImage(imageFile, tournament.id)
+      if (uploadResult.error) {
+        setError(uploadResult.error)
         setSaving(false)
         return
       }
+      newImageUrl = uploadResult.url
     }
 
     const supabase = createClient()

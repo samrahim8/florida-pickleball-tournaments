@@ -119,12 +119,13 @@ export default function SubmitTournamentPage() {
     // Upload image if provided
     let imageUrl: string | null = null
     if (imageFile) {
-      imageUrl = await uploadTournamentImage(imageFile, tournamentId)
-      if (!imageUrl) {
-        setError('Failed to upload image. Please try again.')
+      const uploadResult = await uploadTournamentImage(imageFile, tournamentId)
+      if (uploadResult.error) {
+        setError(uploadResult.error)
         setSaving(false)
         return
       }
+      imageUrl = uploadResult.url
     }
 
     const supabase = createClient()
