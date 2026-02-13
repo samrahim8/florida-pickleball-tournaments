@@ -109,18 +109,8 @@ export default function TournamentDetailPage() {
       <Header />
 
       {/* Hero Section */}
-      <div className="relative bg-[#2D4A3E]">
-        {tournament.image_url && (
-          <div className="absolute inset-0">
-            <Image
-              src={tournament.image_url}
-              alt={tournament.name}
-              fill
-              className="object-cover opacity-30"
-            />
-          </div>
-        )}
-        <div className="relative max-w-4xl mx-auto px-4 py-12">
+      <div className="bg-[#2D4A3E]">
+        <div className="max-w-4xl mx-auto px-4 py-12">
           <Link href="/tournaments" className="inline-flex items-center gap-2 text-[#FAF7F2] hover:text-white text-sm mb-6 transition-colors">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
